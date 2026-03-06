@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechPeru — Tecnología al alcance de todo el Perú</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0f0f1a;
+    --card: #13131f;
+    --border: rgba(255,255,255,0.07);
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --red: #ef4444;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    color: var(--accent);
+  }
+  .logo span { color: var(--text); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta {
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 7rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 70% 50%, rgba(0,212,255,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 50% at 20% 80%, rgba(124,58,237,0.1) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+  }
+  .hero-content {
+    position: relative; z-index: 1;
+    max-width: 700px;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent);
+    font-size: 0.8rem; font-weight: 600;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.5px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-badge::before { content: '●'; font-size: 0.5rem; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  h1 .line2 { color: var(--muted); }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 540px;
+    margin-bottom: 2rem;
+    font-weight: 300;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  .hero-bullets {
+    display: flex; flex-wrap: wrap; gap: 0.7rem;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+  .bullet {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    padding: 0.45rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: var(--text);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+
+  .hero-ctas {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    animation: fadeUp 0.7s 0.4s ease both;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.9rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 30px rgba(0,212,255,0.25);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,212,255,0.4); }
+  .btn-ghost {
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.9rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); background: rgba(0,212,255,0.05); }
+
+  /* FLOATING MOCKUP */
+  .hero-visual {
+    position: absolute;
+    right: 3rem; top: 50%; transform: translateY(-50%);
+    z-index: 1;
+    animation: floatIn 1s 0.5s ease both;
+  }
+  @keyframes floatIn { from { opacity:0; transform: translateY(-50%) translateX(40px); } to { opacity:1; transform: translateY(-50%) translateX(0); } }
+  .laptop-frame {
+    width: 420px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(0,212,255,0.2);
+    box-shadow: 0 0 60px rgba(0,212,255,0.12), 0 30px 60px rgba(0,0,0,0.6);
+    padding: 1.5rem;
+    overflow: hidden;
+  }
+  .laptop-screen {
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .screen-bar { display: flex; gap: 0.4rem; margin-bottom: 1rem; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ef4444; } .dot-y { background: #f59e0b; } .dot-g { background: #22c55e; }
+  .screen-content { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .screen-card {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    transition: transform 0.3s;
+  }
+  .screen-card:hover { transform: scale(1.03); }
+  .screen-label { font-size: 0.65rem; color: var(--muted); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 1px; }
+  .screen-val { font-family: 'Bebas Neue'; font-size: 1.6rem; color: var(--accent); }
+  .screen-val.green { color: #22c55e; }
+  .screen-val.amber { color: var(--accent3); }
+  .stat-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-top: 0.5rem; overflow: hidden; }
+  .stat-fill { height: 100%; border-radius: 2px; animation: grow 1.5s 1s ease both; }
+  .fill1 { background: var(--accent); width: 80%; }
+  .fill2 { background: #22c55e; width: 92%; }
+  .fill3 { background: var(--accent3); width: 70%; }
+  .fill4 { background: var(--accent2); width: 55%; }
+  @keyframes grow { from { transform: scaleX(0); transform-origin: left; } to { transform: scaleX(1); } }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* STATS BAR */
+  .stats-bar {
+    padding: 2rem 3rem;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    gap: 1px;
+  }
+  .stat {
+    text-align: center; padding: 1.5rem 1rem;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-number { font-family: 'Bebas Neue'; font-size: 3rem; color: var(--accent); line-height: 1; }
+  .stat-desc { font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; }
+
+  /* SECTIONS */
+  section { padding: 6rem 3rem; }
+  .section-tag {
+    display: inline-block;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  h2 {
+    font-family: 'Bebas Neue'; font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1; letter-spacing: 1px;
+    margin-bottom: 1rem;
+  }
+  .section-intro { color: var(--muted); font-size: 1.1rem; max-width: 580px; line-height: 1.7; margin-bottom: 3rem; }
+
+  /* BENEFITS */
+  .benefits { background: var(--bg2); }
+  .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+  .benefit-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .benefit-card:hover { border-color: rgba(0,212,255,0.3); transform: translateY(-4px); }
+  .benefit-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .benefit-card:hover::before { opacity: 1; }
+  .benefit-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .benefit-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; }
+  .benefit-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+  /* STORYTELLING */
+  .story { background: var(--bg); }
+  .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .story-before, .story-after {
+    border-radius: 16px; padding: 2.5rem;
+    position: relative;
+  }
+  .story-before {
+    background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(239,68,68,0.03));
+    border: 1px solid rgba(239,68,68,0.2);
+  }
+  .story-after {
+    background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(0,212,255,0.03));
+    border: 1px solid rgba(0,212,255,0.2);
+  }
+  .story-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; }
+  .before-label { color: var(--red); }
+  .after-label { color: var(--accent); }
+  .story-title { font-family: 'Bebas Neue'; font-size: 2rem; margin-bottom: 1rem; }
+  .story-text { color: var(--muted); line-height: 1.7; margin-bottom: 1.2rem; }
+  .story-obstacle {
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    color: var(--accent3);
+    margin-top: 1rem;
+  }
+  .story-transform {
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.15);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-top: 1rem;
+  }
+  .story-arrow {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem; color: var(--muted);
+  }
+  .story-grid-inner { display: grid; grid-template-columns: 1fr 50px 1fr; gap: 1rem; align-items: center; }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--bg2); }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .testimonial-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative;
+    transition: transform 0.3s;
+  }
+  .testimonial-card:hover { transform: translateY(-4px); }
+  .stars { color: var(--accent3); font-size: 1.1rem; margin-bottom: 1rem; letter-spacing: 2px; }
+  .testimonial-text { color: var(--text); line-height: 1.7; margin-bottom: 1.5rem; font-style: italic; font-weight: 300; }
+  .testimonial-author { display: flex; align-items: center; gap: 0.8rem; }
+  .author-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem; color: #000;
+  }
+  .author-name { font-weight: 600; font-size: 0.9rem; }
+  .author-role { font-size: 0.8rem; color: var(--muted); }
+  .authority-banner {
+    margin-top: 3rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem 3rem;
+    text-align: center;
+  }
+  .authority-text { font-size: 1.2rem; color: var(--muted); font-weight: 300; max-width: 600px; margin: 0 auto 1.5rem; }
+  .authority-text strong { color: var(--text); font-weight: 600; }
+
+  /* FAQ */
+  .faq { background: var(--bg); }
+  .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .faq-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.8rem;
+    transition: border-color 0.3s;
+  }
+  .faq-item:hover { border-color: rgba(0,212,255,0.3); }
+  .faq-q { font-weight: 700; font-size: 1rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.7rem; }
+  .faq-q::before { content: '?'; background: rgba(0,212,255,0.15); color: var(--accent); width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+  .faq-a { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+  /* CLOSING CTA */
+  .closing {
+    background: linear-gradient(135deg, var(--bg2) 0%, var(--bg) 100%);
+    text-align: center;
+    padding: 8rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .closing-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,212,255,0.06) 0%, transparent 70%);
+  }
+  .closing-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+  .closing h2 { font-size: clamp(3rem, 7vw, 5.5rem); margin-bottom: 1rem; }
+  .closing-sub { color: var(--muted); font-size: 1.15rem; line-height: 1.7; margin-bottom: 2.5rem; font-weight: 300; }
+  .closing-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* FOOTER */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 3rem;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: 2rem;
+  }
+  .footer-logo { font-family: 'Bebas Neue'; font-size: 1.8rem; color: var(--accent); letter-spacing: 2px; }
+  .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+  .footer-link { color: var(--muted); text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; }
+  .footer-link:hover { color: var(--accent); }
+  .footer-copy { color: var(--muted); font-size: 0.8rem; }
+
+  /* SCROLL REVEAL */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero-visual { display: none; }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .story-grid-inner { grid-template-columns: 1fr; }
+    .story-arrow { transform: rotate(90deg); }
+    .faq-grid { grid-template-columns: 1fr; }
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 4rem 1.5rem; }
+  }
+  @media (max-width: 600px) {
+    .stats-bar { grid-template-columns: 1fr 1fr; padding: 1rem; }
+    .hero { padding: 6rem 1.5rem 3rem; }
+    footer { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">TECH<span>PERU</span></div>
+  <ul class="nav-links">
+    <li><a href="#beneficios">Beneficios</a></li>
+    <li><a href="#testimonios">Clientes</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="#contacto" class="nav-cta">Comprar ahora →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🇵🇪 Envíos a todo el Perú</div>
+    <h1>
+      LA TECNOLOGÍA<br>
+      QUE <em>NECESITAS</em><br>
+      <span class="line2">AL ALCANCE</span>
+    </h1>
+    <p class="hero-sub">Computadoras, laptops y accesorios tecnológicos con garantía, asesoría experta y envío a nivel nacional.</p>
+    <div class="hero-bullets">
+      <span class="bullet">💻 Estudio, trabajo y gaming</span>
+      <span class="bullet">🚚 Envío nacional seguro</span>
+      <span class="bullet">🔒 Garantía total</span>
+      <span class="bullet">💳 Facilidades de pago</span>
+    </div>
+    <div class="hero-ctas">
+      <a href="#productos" class="btn-primary">Explora nuestros equipos →</a>
+      <a href="#contacto" class="btn-ghost">Habla con un asesor</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="laptop-frame">
+      <div class="laptop-screen">
+        <div class="screen-bar">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+        </div>
+        <div class="screen-content">
+          <div class="screen-card">
+            <div class="screen-label">Clientes</div>
+            <div class="screen-val">5K+</div>
+            <div class="stat-bar"><div class="stat-fill fill1"></div></div>
+          </div>
+          <div class="screen-card">
+            <div class="screen-label">Satisfacción</div>
+            <div class="screen-val green">98%</div>
+            <div class="stat-bar"><div class="stat-fill fill2"></div></div>
+          </div>
+          <div class="screen-card">
+            <div class="screen-label">Ciudades</div>
+            <div class="screen-val amber">25+</div>
+            <div class="stat-bar"><div class="stat-fill fill3"></div></div>
+          </div>
+          <div class="screen-card">
+            <div class="screen-label">Stock</div>
+            <div class="screen-val">200+</div>
+            <div class="stat-bar"><div class="stat-fill fill4"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat reveal">
+    <div class="stat-number">5,000+</div>
+    <div class="stat-desc">Clientes satisfechos</div>
+  </div>
+  <div class="stat reveal reveal-delay-1">
+    <div class="stat-number">25+</div>
+    <div class="stat-desc">Ciudades en Perú</div>
+  </div>
+  <div class="stat reveal reveal-delay-2">
+    <div class="stat-number">98%</div>
+    <div class="stat-desc">Satisfacción garantizada</div>
+  </div>
+  <div class="stat reveal reveal-delay-3">
+    <div class="stat-number">48H</div>
+    <div class="stat-desc">Entrega rápida</div>
+  </div>
+</div>
+
+<!-- BENEFICIOS -->
+<section class="benefits" id="beneficios">
+  <div class="section-tag">¿Por qué elegirnos?</div>
+  <h2>TECNOLOGÍA QUE<br>IMPULSA TU DÍA</h2>
+  <p class="section-intro">No vendemos solo computadoras. Ofrecemos soluciones tecnológicas que te permiten estudiar mejor, trabajar más rápido y disfrutar más.</p>
+  <div class="benefits-grid">
+    <div class="benefit-card reveal">
+      <div class="benefit-icon">💻</div>
+      <div class="benefit-title">Equipos para cada necesidad</div>
+      <p class="benefit-desc">Desde tareas básicas hasta alto rendimiento para diseño o gaming. Tenemos el equipo perfecto para ti.</p>
+    </div>
+    <div class="benefit-card reveal reveal-delay-1">
+      <div class="benefit-icon">🎯</div>
+      <div class="benefit-title">Asesoría clara y honesta</div>
+      <p class="benefit-desc">Te ayudamos a elegir lo que realmente necesitas, sin complicaciones ni tecnicismos innecesarios.</p>
+    </div>
+    <div class="benefit-card reveal reveal-delay-2">
+      <div class="benefit-icon">🛡️</div>
+      <div class="benefit-title">Garantía y respaldo nacional</div>
+      <p class="benefit-desc">Compra con confianza desde cualquier ciudad del Perú. Todos nuestros equipos tienen garantía.</p>
+    </div>
+    <div class="benefit-card reveal reveal-delay-3">
+      <div class="benefit-icon">🚀</div>
+      <div class="benefit-title">Entrega rápida y segura</div>
+      <p class="benefit-desc">Recibe tu equipo donde estés, sin riesgos ni demoras innecesarias. Llegamos a todo el Perú.</p>
+    </div>
+  </div>
+  <div style="margin-top: 2.5rem;">
+    <a href="#contacto" class="btn-primary">Encuentra tu equipo ideal hoy →</a>
+  </div>
+</section>
+
+<!-- STORYTELLING -->
+<section class="story" id="historia">
+  <div class="section-tag">Tu historia</div>
+  <h2>DE LA DUDA A<br>LA DECISIÓN CORRECTA</h2>
+  <div class="story-grid-inner reveal">
+    <div class="story-before">
+      <div class="story-label before-label">✕ Antes</div>
+      <div class="story-title">Confusión y dudas</div>
+      <p class="story-text">Necesitas una computadora. Buscas en internet, comparas precios, pero todo parece confuso. Especificaciones técnicas difíciles de entender y miedo a elegir mal.</p>
+      <div class="story-obstacle">⚠️ Demasiada información, poca orientación y desconfianza al comprar tecnología en línea.</div>
+    </div>
+    <div class="story-arrow">→</div>
+    <div class="story-after">
+      <div class="story-label after-label">✓ Después</div>
+      <div class="story-title">Claridad y confianza</div>
+      <p class="story-text">Llegas a nuestra tienda. Te asesoramos de forma simple y directa. Entiendes qué equipo necesitas y por qué. Compras con seguridad y garantía.</p>
+      <div class="story-transform">✨ De la incertidumbre a la confianza. Una compra inteligente que impulsa tu productividad.</div>
+    </div>
+  </div>
+  <div style="margin-top: 2.5rem; text-align: center;">
+    <a href="#contacto" class="btn-primary">Toma la decisión correcta hoy →</a>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="testimonials" id="testimonios">
+  <div class="section-tag">Prueba social</div>
+  <h2>MILES DE CLIENTES<br>YA CONFÍAN EN NOSOTROS</h2>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Compré mi laptop para la universidad y llegó rápido. Excelente atención y el equipo superó mis expectativas."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">ML</div>
+        <div>
+          <div class="author-name">María López</div>
+          <div class="author-role">Estudiante universitaria, Lima</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-1">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Me ayudaron a elegir mi PC para trabajo remoto. Todo claro y sin complicaciones. Llegó en perfecto estado a Arequipa."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">CR</div>
+        <div>
+          <div class="author-name">Carlos Ríos</div>
+          <div class="author-role">Freelancer, Arequipa</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-2">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Increíble el servicio. Me explicaron todo sin tecnicismos y encontré exactamente lo que necesitaba para mi negocio."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">AS</div>
+        <div>
+          <div class="author-name">Ana Sánchez</div>
+          <div class="author-role">Emprendedora, Trujillo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="authority-banner reveal">
+    <p class="authority-text">Cada día más personas en todo el Perú eligen nuestra tecnología para <strong>estudiar, trabajar y emprender</strong>.</p>
+    <a href="#contacto" class="btn-primary">Únete a nuestros clientes →</a>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="section-tag">Compra con seguridad</div>
+  <h2>TOTAL<br>TRANQUILIDAD</h2>
+  <div class="faq-grid">
+    <div class="faq-item reveal">
+      <div class="faq-q">¿Los productos tienen garantía?</div>
+      <p class="faq-a">Sí. Todos nuestros equipos cuentan con garantía oficial y respaldo post-venta. Comprás con total seguridad.</p>
+    </div>
+    <div class="faq-item reveal reveal-delay-1">
+      <div class="faq-q">¿Realizan envíos a provincia?</div>
+      <p class="faq-a">Enviamos a nivel nacional con sistemas de transporte seguros y confiables. Llegamos a más de 25 ciudades del Perú.</p>
+    </div>
+    <div class="faq-item reveal reveal-delay-2">
+      <div class="faq-q">¿Recibiré asesoría antes de comprar?</div>
+      <p class="faq-a">Siempre. Nuestro equipo de asesores te orienta para que tomes la mejor decisión según tu presupuesto y necesidades.</p>
+    </div>
+    <div class="faq-item reveal reveal-delay-3">
+      <div class="faq-q">¿Hay facilidades de pago?</div>
+      <p class="faq-a">Contamos con múltiples opciones de pago para que puedas acceder a la tecnología que necesitas sin complicaciones.</p>
+    </div>
+  </div>
+  <div style="margin-top: 2.5rem;">
+    <a href="#contacto" class="btn-primary">Habla con un asesor ahora →</a>
+  </div>
+</section>
+
+<!-- CLOSING CTA -->
+<section class="closing" id="contacto">
+  <div class="closing-bg"></div>
+  <div class="closing-content reveal">
+    <div class="section-tag">Es el momento</div>
+    <h2>ACTUALIZA<br>TU <em style="font-style:normal; color: var(--accent);">TECH</em><br>HOY</h2>
+    <p class="closing-sub">Tu computadora no es un gasto, es una herramienta para crecer. Ya sea para estudiar, trabajar o emprender, el equipo correcto marca la diferencia. No postergues más tu productividad.</p>
+    <div class="closing-ctas">
+      <a href="https://wa.me/51999999999?text=Hola!%20Quiero%20asesor%C3%ADa%20para%20comprar%20un%20equipo" class="btn-primary" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
+        💬 Compra con garantía y envío seguro
+      </a>
+      <a href="#beneficios" class="btn-ghost" style="font-size: 1.1rem; padding: 1rem 2.5rem;">Descubrir opciones</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">TECH<span style="color:var(--text)">PERU</span></div>
+  <div class="footer-links">
+    <a href="#" class="footer-link">📦 Envíos a todo el Perú</a>
+    <a href="#" class="footer-link">🔒 Garantía en todos los productos</a>
+    <a href="#" class="footer-link">💬 Asesoría personalizada</a>
+    <a href="#" class="footer-link">💻 Especialistas en tecnología</a>
+  </div>
+  <div class="footer-copy">© 2025 TechPeru. Todos los derechos reservados.</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+</script>
+
+</body>
+</html>
