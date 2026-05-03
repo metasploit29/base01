@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PricePro - Calculadora de Precio de Venta</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f0f4ff;
+      --surface: #ffffff;
+      --surface2: #f7f9ff;
+      --border: #e2e8f7;
+      --primary: #2563eb;
+      --primary-light: #dbeafe;
+      --primary-dark: #1d4ed8;
+      --accent: #0ea5e9;
+      --success: #10b981;
+      --success-light: #d1fae5;
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --shadow-sm: 0 1px 3px rgba(37,99,235,0.08), 0 1px 2px rgba(37,99,235,0.04);
+      --shadow: 0 4px 16px rgba(37,99,235,0.1), 0 2px 6px rgba(37,99,235,0.06);
+      --shadow-lg: 0 10px 40px rgba(37,99,235,0.15), 0 4px 12px rgba(37,99,235,0.08);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(37,99,235,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(14,165,233,0.06) 0%, transparent 60%);
+    }
+
+    /* HEADER */
+    .app-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky; top: 0; z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .app-logo {
+      display: flex; align-items: center; gap: 0.7rem;
+      font-size: 1.1rem; font-weight: 700; color: var(--primary);
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .app-version {
+      font-size: 0.7rem; font-weight: 500;
+      background: var(--primary-light); color: var(--primary);
+      padding: 0.2rem 0.6rem; border-radius: 100px;
+    }
+    .admin-badge {
+      font-size: 0.7rem; font-weight: 600;
+      background: linear-gradient(135deg,#7c3aed,#a855f7);
+      color: white;
+      padding: 0.2rem 0.7rem; border-radius: 100px;
+    }
+
+    /* MAIN */
+    .main { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+    /* CARDS */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+      transition: box-shadow 0.3s;
+    }
+    .card:hover { box-shadow: var(--shadow-lg); }
+    .card-header {
+      padding: 1.4rem 2rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 1rem; background: var(--surface2);
+    }
+    .card-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+    }
+    .icon-blue { background: var(--primary-light); }
+    .icon-green { background: var(--success-light); }
+    .icon-amber { background: var(--warning-light); }
+    .icon-purple { background: #f3e8ff; }
+    .icon-result { background: linear-gradient(135deg, var(--primary-light), #e0f2fe); }
+    .icon-sunat { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+    .card-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .card-subtitle { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .card-body { padding: 2rem; }
+
+    /* LOGIN */
+    .login-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .login-welcome h2 { font-size: 1.8rem; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 0.7rem; }
+    .login-welcome h2 span { color: var(--primary); }
+    .login-welcome p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+    .login-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--primary-light); color: var(--primary);
+      font-size: 0.75rem; font-weight: 600;
+      padding: 0.3rem 0.8rem; border-radius: 100px; margin-bottom: 1rem;
+    }
+
+    .form-group { margin-bottom: 1.2rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; letter-spacing: 0.5px; text-transform: uppercase; }
+    .form-input {
+      width: 100%; padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      font-family: 'Sora', sans-serif; font-size: 0.9rem; color: var(--text);
+      background: var(--surface); transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+    }
+    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+    .form-input.error { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(239,68,68,0.12); }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: 'Sora', sans-serif; font-weight: 600; font-size: 0.875rem;
+      padding: 0.7rem 1.4rem; border-radius: var(--radius-sm);
+      border: none; cursor: pointer; transition: all 0.2s; text-decoration: none;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.4); }
+    .btn-success { background: linear-gradient(135deg, var(--success), #059669); color: white; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+    .btn-success:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,0.4); }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text-muted); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+    .btn-danger { background: var(--danger-light); color: var(--danger); font-size: 0.78rem; padding: 0.4rem 0.8rem; }
+    .btn-danger:hover { background: var(--danger); color: white; }
+    .btn-purple { background: linear-gradient(135deg,#7c3aed,#a855f7); color: white; box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
+    .btn-purple:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.4); }
+    .btn-amber { background: linear-gradient(135deg,#f59e0b,#d97706); color: white; box-shadow: 0 4px 12px rgba(245,158,11,0.3); }
+    .btn-amber:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,158,11,0.4); }
+    .btn-sm { padding: 0.4rem 0.9rem; font-size: 0.8rem; }
+
+    /* TABLES */
+    .table-wrapper { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    thead { background: var(--surface2); }
+    th { padding: 0.9rem 1rem; text-align: left; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid var(--border); }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr { transition: background 0.15s; }
+    tbody tr:hover { background: var(--surface2); }
+
+    .table-input {
+      width: 100%; padding: 0.45rem 0.7rem;
+      border: 1.5px solid var(--border); border-radius: 6px;
+      font-family: 'Sora', sans-serif; font-size: 0.85rem; color: var(--text);
+      background: var(--surface); transition: border-color 0.2s, box-shadow 0.2s; outline: none; min-width: 100px;
+    }
+    .table-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .table-input[type="number"] { font-family: 'JetBrains Mono', monospace; text-align: right; }
+    .subtotal-cell { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 0.9rem; color: var(--primary); text-align: right; white-space: nowrap; }
+
+    .total-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 1rem; padding: 0.9rem 1.2rem;
+      background: var(--primary-light); border-radius: var(--radius-sm);
+      border: 1px solid rgba(37,99,235,0.15);
+    }
+    .total-label { font-size: 0.85rem; font-weight: 600; color: var(--primary); }
+    .total-value { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+    .table-actions { margin-top: 1rem; }
+
+    /* MARGINS */
+    .margins-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .input-with-suffix { display: flex; align-items: center; }
+    .input-suffix {
+      background: var(--surface2); border: 1.5px solid var(--border); border-left: none;
+      padding: 0.75rem 1rem; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-weight: 700; color: var(--text-muted); font-size: 0.9rem;
+    }
+    .input-with-suffix .form-input { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+
+    /* RESULT */
+    .result-card {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      border-radius: var(--radius); padding: 2.5rem; color: white; text-align: center; position: relative; overflow: hidden;
+    }
+    .result-card::before { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: rgba(255,255,255,0.08); border-radius: 50%; }
+    .result-card::after { content: ''; position: absolute; bottom: -60px; left: -20px; width: 220px; height: 220px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+    .result-label { font-size: 0.8rem; font-weight: 600; opacity: 0.8; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 0.5rem; position: relative; z-index: 1; }
+    .result-price { font-family: 'JetBrains Mono', monospace; font-size: 3rem; font-weight: 700; line-height: 1; margin-bottom: 0.5rem; position: relative; z-index: 1; }
+    .result-sub { font-size: 0.85rem; opacity: 0.75; position: relative; z-index: 1; }
+
+    .breakdown-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .breakdown-item { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.2rem; text-align: center; }
+    .breakdown-item-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 0.4rem; }
+    .breakdown-item-val { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 700; color: var(--text); }
+    .breakdown-item-val.blue { color: var(--primary); }
+    .breakdown-item-val.green { color: var(--success); }
+    .breakdown-item-val.amber { color: var(--warning); }
+
+    /* SECTION DIVIDER */
+    .section-divider { display: flex; align-items: center; gap: 1rem; margin: 0.5rem 0 1.5rem; }
+    .section-divider span { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* STEPS */
+    .steps { display: flex; align-items: center; gap: 0; margin-bottom: 0.5rem; }
+    .step { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1.2rem 0.6rem 0.8rem; border-radius: 100px; font-size: 0.78rem; font-weight: 600; cursor: default; }
+    .step.active { background: var(--primary); color: white; }
+    .step.done { background: var(--success-light); color: var(--success); }
+    .step.pending { background: var(--surface2); color: var(--text-light); }
+    .step-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; }
+    .step.active .step-num { background: rgba(255,255,255,0.2); }
+    .step.done .step-num { background: var(--success); color: white; }
+    .step.pending .step-num { background: var(--border); color: var(--text-light); }
+    .step-arrow { color: var(--text-light); font-size: 0.8rem; padding: 0 0.3rem; }
+
+    /* ADMIN PANEL */
+    .admin-panel {
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: 0 10px 40px rgba(124,58,237,0.25);
+    }
+    .admin-panel-header {
+      padding: 1.4rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .admin-panel-title { color: white; font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 0.7rem; }
+    .admin-panel-body { padding: 2rem; }
+
+    .user-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.5rem; max-height: 320px; overflow-y: auto; }
+    .user-item {
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-sm); padding: 0.8rem 1rem;
+      transition: background 0.2s;
+    }
+    .user-item:hover { background: rgba(255,255,255,0.1); }
+    .user-item-info { display: flex; align-items: center; gap: 0.8rem; }
+    .user-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg,#7c3aed,#a855f7);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 700; color: white;
+    }
+    .user-dni { font-weight: 700; color: white; font-size: 0.9rem; }
+    .user-name { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.1rem; }
+    .user-role-badge {
+      font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.6rem;
+      border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .role-admin { background: rgba(250,204,21,0.2); color: #fbbf24; border: 1px solid rgba(250,204,21,0.3); }
+    .role-user { background: rgba(99,102,241,0.2); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+
+    .add-user-form {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm); padding: 1.5rem;
+    }
+    .add-user-form .form-label { color: rgba(255,255,255,0.6); }
+    .add-user-form .form-input {
+      background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15);
+      color: white;
+    }
+    .add-user-form .form-input::placeholder { color: rgba(255,255,255,0.3); }
+    .add-user-form .form-input:focus { border-color: #a855f7; box-shadow: 0 0 0 3px rgba(168,85,247,0.2); }
+    .add-user-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+    .empty-state {
+      text-align: center; padding: 2rem;
+      color: rgba(255,255,255,0.4); font-size: 0.85rem;
+    }
+
+    .alert {
+      padding: 0.8rem 1rem; border-radius: var(--radius-sm);
+      font-size: 0.85rem; font-weight: 500; margin-bottom: 1rem;
+      display: none;
+    }
+    .alert-error { background: var(--danger-light); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+    .alert-success-light { background: var(--success-light); color: var(--success); border: 1px solid rgba(16,185,129,0.2); }
+    .alert-warning { background: var(--warning-light); color: #92400e; border: 1px solid rgba(245,158,11,0.2); }
+
+    /* MODAL OVERLAY */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      z-index: 100; display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(4px); animation: fadeIn 0.2s ease;
+    }
+    .modal-box {
+      background: white; border-radius: var(--radius); padding: 2rem;
+      max-width: 420px; width: 90%; box-shadow: var(--shadow-lg);
+      animation: slideUp 0.3s ease;
+    }
+    .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .modal-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .modal-actions { display: flex; gap: 0.8rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .animate-in { animation: fadeSlideUp 0.4s ease both; }
+    .hidden { display: none; }
+
+    /* ===== DECOLECTA / RUC STYLES ===== */
+    .ruc-search-bar {
+      display: flex; gap: 0.8rem; align-items: flex-end; flex-wrap: wrap;
+    }
+    .ruc-search-bar .form-group { margin-bottom: 0; flex: 1; min-width: 180px; }
+    .ruc-input-wrapper { position: relative; }
+    .ruc-input-wrapper .form-input {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem; letter-spacing: 1px;
+      padding-right: 2.8rem;
+    }
+    .ruc-clear-btn {
+      position: absolute; right: 0.8rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--text-light); font-size: 1rem; line-height: 1;
+      display: none;
+    }
+    .ruc-clear-btn:hover { color: var(--danger); }
+    .ruc-spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(37,99,235,0.2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .ruc-token-field { display: flex; gap: 0.5rem; align-items: center; }
+    .ruc-token-field .form-input { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+    .ruc-token-eye {
+      background: var(--surface2); border: 1.5px solid var(--border);
+      padding: 0.75rem 0.85rem; border-radius: var(--radius-sm);
+      cursor: pointer; font-size: 1rem; flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .ruc-token-eye:hover { background: var(--primary-light); }
+
+    .ruc-result-card {
+      margin-top: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeSlideUp 0.4s ease both;
+    }
+    .ruc-result-header {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      padding: 1.2rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .ruc-result-razon {
+      font-size: 1.1rem; font-weight: 700; color: #78350f;
+    }
+    .ruc-result-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem; color: #92400e; font-weight: 600;
+    }
+    .ruc-estado-badge {
+      font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.8rem;
+      border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .estado-activo { background: var(--success-light); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+    .estado-baja   { background: var(--danger-light);  color: var(--danger);  border: 1px solid rgba(239,68,68,0.3); }
+    .estado-otro   { background: var(--warning-light); color: #92400e;        border: 1px solid rgba(245,158,11,0.3); }
+
+    .ruc-result-body { padding: 1.2rem 1.5rem; background: var(--surface); }
+    .ruc-fields-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .ruc-field { }
+    .ruc-field-label {
+      font-size: 0.68rem; font-weight: 700; color: var(--text-light);
+      text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 0.25rem;
+    }
+    .ruc-field-value { font-size: 0.88rem; color: var(--text); font-weight: 500; line-height: 1.3; }
+    .ruc-field-value.mono { font-family: 'JetBrains Mono', monospace; }
+
+    .ruc-condicion-badge {
+      display: inline-block;
+      font-size: 0.68rem; font-weight: 700; padding: 0.2rem 0.6rem;
+      border-radius: 100px; text-transform: uppercase;
+    }
+    .habido    { background: var(--success-light); color: var(--success); }
+    .no-habido { background: var(--danger-light);  color: var(--danger); }
+
+    .ruc-result-footer {
+      padding: 0.8rem 1.5rem;
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .ruc-timestamp { font-size: 0.72rem; color: var(--text-light); }
+    .ruc-history-list {
+      max-height: 220px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .ruc-history-item {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 0.7rem 1rem;
+      cursor: pointer; transition: background 0.15s; gap: 0.8rem;
+    }
+    .ruc-history-item:hover { background: var(--primary-light); border-color: var(--primary); }
+    .ruc-history-ruc { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.9rem; color: var(--primary); }
+    .ruc-history-name { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+    .ruc-history-date { font-size: 0.7rem; color: var(--text-light); white-space: nowrap; }
+    .ruc-empty-history { text-align: center; padding: 1.5rem; color: var(--text-light); font-size: 0.85rem; }
+
+    /* ===== END DECOLECTA STYLES ===== */
+
+    @media (max-width: 700px) {
+      .login-layout { grid-template-columns: 1fr; gap: 1.5rem; }
+      .margins-grid { grid-template-columns: 1fr; }
+      .breakdown-grid { grid-template-columns: 1fr; }
+      .add-user-grid { grid-template-columns: 1fr; }
+      .main { padding: 1.5rem 1rem; }
+      .card-body { padding: 1.2rem; }
+      .result-price { font-size: 2rem; }
+      .ruc-search-bar { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="app-logo">
+      <div class="logo-icon">💰</div>
+      PricePro
+    </div>
+    <div style="display:flex;align-items:center;gap:0.8rem;">
+      <span class="app-version">v2.1</span>
+      <span id="user-badge" style="font-size:0.8rem;font-weight:600;color:var(--text-muted);display:none;align-items:center;gap:0.4rem;">
+        👤 <span id="user-dni-display"></span>
+      </span>
+      <span id="admin-header-badge" class="admin-badge hidden">⚙️ Admin</span>
+      <button id="btn-logout" class="btn btn-outline btn-sm hidden" onclick="cerrarSesion()">↩ Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- STEPS BAR -->
+  <div class="steps hidden" id="steps-bar">
+    <div class="step active" id="step1"><div class="step-num">1</div>Acceso</div>
+    <div class="step-arrow">›</div>
+    <div class="step pending" id="step2"><div class="step-num">2</div>Costos</div>
+    <div class="step-arrow">›</div>
+    <div class="step pending" id="step3"><div class="step-num">3</div>Resultado</div>
+  </div>
+
+  <!-- ===================== LOGIN CARD ===================== -->
+  <div class="card animate-in" id="card-login">
+    <div class="card-header">
+      <div class="card-icon icon-blue">🔐</div>
+      <div>
+        <div class="card-title">Acceso al Sistema</div>
+        <div class="card-subtitle">Ingresa tus credenciales para continuar</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="login-layout">
+        <div class="login-welcome">
+          <div class="login-badge">✦ Sistema de Precios</div>
+          <h2>Calcula el <span>precio perfecto</span> para tu producto</h2>
+          <p>Registra tus costos fijos, variables y otros. El sistema calculará automáticamente el precio de venta óptimo con tu margen e impuestos.</p>
+          <p style="margin-top:0.8rem;font-size:0.78rem;color:var(--text-light);">¿Eres administrador? Ingresa con tus credenciales de admin para gestionar usuarios.</p>
+        </div>
+
+        <div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">
+            <button class="btn btn-outline btn-sm" style="background:var(--primary-light);color:var(--primary);border-color:var(--primary);" onclick="mostrarLogin()">Iniciar Sesión</button>
+            <button class="btn btn-outline btn-sm" onclick="mostrarRegistro()">Registrarse</button>
+          </div>
+
+          <!-- FORMULARIO DE INGRESO -->
+          <div id="login-form-section">
+            <div id="login-alert" class="alert alert-error">⚠️ DNI o clave incorrectos.</div>
+            <div class="form-group">
+              <label class="form-label">DNI</label>
+              <input type="text" id="dni" class="form-input" placeholder="12345678" maxlength="8">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Clave de acceso</label>
+              <input type="password" id="clave" class="form-input" placeholder="••••••••">
+            </div>
+            <button class="btn btn-primary" onclick="validarIngreso()" style="width:100%;justify-content:center;">
+              ⚡ Ingresar al sistema
+            </button>
+          </div>
+
+          <!-- FORMULARIO DE REGISTRO -->
+          <div id="registro-form-section" class="hidden">
+            <div id="registro-alert" class="alert alert-error">⚠️ Error en el registro.</div>
+            <div id="registro-alert-ok" class="alert alert-success-light">✅ Usuario registrado exitosamente.</div>
+            <div class="form-group">
+              <label class="form-label">DNI</label>
+              <input type="text" id="registro-dni" class="form-input" placeholder="12345678" maxlength="8">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nombre (opcional)</label>
+              <input type="text" id="registro-nombre" class="form-input" placeholder="Tu nombre completo">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Clave de acceso</label>
+              <input type="password" id="registro-clave" class="form-input" placeholder="Mínimo 4 caracteres">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirmar clave</label>
+              <input type="password" id="registro-confirm-clave" class="form-input" placeholder="Repite la clave">
+            </div>
+            <button class="btn btn-success" onclick="registrarUsuario()" style="width:100%;justify-content:center;">
+              ✅ Crear cuenta nueva
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ADMIN PANEL ===================== -->
+  <div class="hidden animate-in" id="card-admin">
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <div class="admin-panel-title">
+          <span style="font-size:1.3rem;">⚙️</span>
+          Panel de Administración — Gestión de Usuarios
+        </div>
+        <span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">Los datos se guardan en este navegador</span>
+      </div>
+      <div class="admin-panel-body">
+
+        <div class="section-divider" style="margin-top:0;">
+          <div class="divider-line" style="background:rgba(255,255,255,0.1);"></div>
+          <span style="color:rgba(255,255,255,0.5);">👥 Usuarios registrados</span>
+          <div class="divider-line" style="background:rgba(255,255,255,0.1);"></div>
+        </div>
+
+        <div class="user-list" id="user-list"></div>
+
+        <div class="section-divider">
+          <div class="divider-line" style="background:rgba(255,255,255,0.1);"></div>
+          <span style="color:rgba(255,255,255,0.5);">➕ Agregar nuevo usuario</span>
+          <div class="divider-line" style="background:rgba(255,255,255,0.1);"></div>
+        </div>
+
+        <div class="add-user-form">
+          <div id="add-user-alert-error" class="alert alert-error"></div>
+          <div id="add-user-alert-ok" class="alert alert-success-light"></div>
+          <div class="add-user-grid">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">DNI del usuario</label>
+              <input type="text" id="new-dni" class="form-input" placeholder="12345678" maxlength="8">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Nombre (opcional)</label>
+              <input type="text" id="new-name" class="form-input" placeholder="Juan García">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Clave de acceso</label>
+              <input type="password" id="new-clave" class="form-input" placeholder="Mínimo 4 caracteres">
+            </div>
+          </div>
+          <div style="margin-top:1rem;display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-purple" onclick="agregarUsuarioAdmin()">✅ Agregar usuario</button>
+            <span style="color:rgba(255,255,255,0.3);font-size:0.78rem;">Los usuarios agregados podrán acceder inmediatamente</span>
+          </div>
+        </div>
+
+        <div class="section-divider" style="margin-top:1.5rem;">
+          <div class="divider-line" style="background:rgba(255,255,255,0.1);"></div>
+          <span style="color:rgba(255,255,255,0.5);">🔑 Seguridad Admin</span>
+          <div class="divider-line" style="background:rgba(255,255,255,0.1);"></div>
+        </div>
+        <div class="add-user-form">
+          <div id="change-pwd-alert" class="alert"></div>
+          <div class="add-user-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Nueva clave admin</label>
+              <input type="password" id="new-admin-clave" class="form-input" placeholder="Nueva clave">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Confirmar clave</label>
+              <input type="password" id="confirm-admin-clave" class="form-input" placeholder="Repite la clave">
+            </div>
+          </div>
+          <div style="margin-top:1rem;">
+            <button class="btn btn-outline" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);" onclick="cambiarClaveAdmin()">🔒 Cambiar clave de admin</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CONSULTA RUC (DECOLECTA) ===================== -->
+  <div class="card animate-in hidden" id="card-ruc">
+    <div class="card-header">
+      <div class="card-icon icon-sunat">🏢</div>
+      <div>
+        <div class="card-title">Consulta de RUC — SUNAT</div>
+        <div class="card-subtitle">Verifica datos de empresas proveedoras vía Decolecta</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Token config -->
+      <div class="section-divider" style="margin-top:0;">
+        <div class="divider-line"></div>
+        <span>🔑 Token de acceso</span>
+        <div class="divider-line"></div>
+      </div>
+      <div id="ruc-token-alert" class="alert alert-warning">⚠️ Ingresa tu token de Decolecta para usar esta función. Puedes obtenerlo registrándote en <strong>decolecta.com</strong></div>
+      <div style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+        <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px;">
+          <label class="form-label">Token Decolecta (Bearer)</label>
+          <div class="ruc-token-field">
+            <input type="password" id="decolecta-token" class="form-input" placeholder="Tu token de Decolecta" oninput="onTokenInput()">
+            <button class="ruc-token-eye" id="token-eye-btn" onclick="toggleTokenVis()" title="Mostrar/ocultar token">👁️</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.6rem;padding-bottom:1.2rem;">
+          <button class="btn btn-amber btn-sm" onclick="guardarToken()">💾 Guardar token</button>
+          <button class="btn btn-danger btn-sm" onclick="borrarToken()">✕ Borrar</button>
+        </div>
+      </div>
+      <div id="token-saved-indicator" style="font-size:0.75rem;color:var(--success);margin-top:-0.5rem;margin-bottom:1rem;display:none;">✅ Token guardado en este navegador</div>
+
+      <!-- Búsqueda RUC -->
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span>🔍 Buscar por RUC</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="ruc-search-bar">
+        <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px;">
+          <label class="form-label">Número de RUC (11 dígitos)</label>
+          <div class="ruc-input-wrapper">
+            <input type="text" id="ruc-numero" class="form-input" placeholder="20601030013"
+              maxlength="11" oninput="onRucInput(this)" onkeydown="if(event.key==='Enter')consultarRuc()">
+            <button class="ruc-clear-btn" id="ruc-clear" onclick="limpiarRucInput()" title="Limpiar">✕</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.6rem;align-items:center;padding-bottom:1.2rem;">
+          <button class="btn btn-primary" onclick="consultarRuc()" id="btn-consultar-ruc">🔍 Consultar</button>
+          <div class="ruc-spinner" id="ruc-spinner"></div>
+        </div>
+        <div style="padding-bottom:1.2rem;">
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <input type="checkbox" id="ruc-full" style="accent-color:var(--primary);width:15px;height:15px;">
+            <label for="ruc-full" style="font-size:0.8rem;color:var(--text-muted);cursor:pointer;">Consulta avanzada (full)</label>
+          </div>
+        </div>
+      </div>
+
+      <div id="ruc-search-alert" class="alert" style="margin-top:0.5rem;"></div>
+
+      <!-- Resultado de consulta -->
+      <div id="ruc-result-container"></div>
+
+      <!-- Historial -->
+      <div class="section-divider" style="margin-top:1.5rem;">
+        <div class="divider-line"></div>
+        <span>🕒 Historial de consultas</span>
+        <div class="divider-line"></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:0.5rem;">
+        <button class="btn btn-outline btn-sm" onclick="limpiarHistorial()">🗑️ Limpiar historial</button>
+      </div>
+      <div id="ruc-history-container"></div>
+
+    </div>
+  </div>
+
+  <!-- ===================== COSTS CARD ===================== -->
+  <div class="card animate-in hidden" id="card-costos">
+    <div class="card-header">
+      <div class="card-icon icon-blue">📋</div>
+      <div>
+        <div class="card-title">Registro de Costos</div>
+        <div class="card-subtitle">Ingresa el detalle de todos los productos y costos</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="section-divider">
+        <div class="divider-line"></div><span>📌 Costos Fijos</span><div class="divider-line"></div>
+      </div>
+      <div class="table-wrapper">
+        <table id="tablaFijos">
+          <thead><tr>
+            <th>Producto / Descripción</th>
+            <th style="width:100px">Cantidad</th>
+            <th style="width:120px">Unidad</th>
+            <th style="width:140px">Precio Unit. (S/.)</th>
+            <th style="width:120px">Subtotal (S/.)</th>
+            <th style="width:80px">Acción</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="table-actions" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <button class="btn btn-outline btn-sm" onclick="agregarFila('tablaFijos')">＋ Agregar producto</button>
+        <div class="total-row" style="margin-top:0;min-width:220px;">
+          <span class="total-label">Total Costos Fijos</span>
+          <span class="total-value">S/. <span id="totalFijos">0.00</span></span>
+        </div>
+      </div>
+
+      <div class="section-divider" style="margin-top:2rem;">
+        <div class="divider-line"></div><span>📊 Costos Variables</span><div class="divider-line"></div>
+      </div>
+      <div class="table-wrapper">
+        <table id="tablaVariables">
+          <thead><tr>
+            <th>Producto / Descripción</th>
+            <th style="width:100px">Cantidad</th>
+            <th style="width:120px">Unidad</th>
+            <th style="width:140px">Precio Unit. (S/.)</th>
+            <th style="width:120px">Subtotal (S/.)</th>
+            <th style="width:80px">Acción</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="table-actions" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <button class="btn btn-outline btn-sm" onclick="agregarFila('tablaVariables')">＋ Agregar producto</button>
+        <div class="total-row" style="margin-top:0;min-width:220px;">
+          <span class="total-label">Total Costos Variables</span>
+          <span class="total-value">S/. <span id="totalVariables">0.00</span></span>
+        </div>
+      </div>
+
+      <div class="section-divider" style="margin-top:2rem;">
+        <div class="divider-line"></div><span>🔀 Costos Otros</span><div class="divider-line"></div>
+      </div>
+      <div class="table-wrapper">
+        <table id="tablaOtros">
+          <thead><tr>
+            <th>Producto / Descripción</th>
+            <th style="width:100px">Cantidad</th>
+            <th style="width:120px">Unidad</th>
+            <th style="width:140px">Precio Unit. (S/.)</th>
+            <th style="width:120px">Subtotal (S/.)</th>
+            <th style="width:80px">Acción</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="table-actions" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <button class="btn btn-outline btn-sm" onclick="agregarFila('tablaOtros')">＋ Agregar producto</button>
+        <div class="total-row" style="margin-top:0;min-width:220px;">
+          <span class="total-label">Total Costos Otros</span>
+          <span class="total-value">S/. <span id="totalOtros">0.00</span></span>
+        </div>
+      </div>
+
+      <div class="section-divider" style="margin-top:2rem;">
+        <div class="divider-line"></div><span>💹 Margen e Impuestos</span><div class="divider-line"></div>
+      </div>
+      <div class="margins-grid">
+        <div class="form-group">
+          <label class="form-label">Margen de Ganancia</label>
+          <div class="input-with-suffix">
+            <input type="number" id="margen" class="form-input" value="20" min="0" max="100">
+            <div class="input-suffix">%</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Impuestos (IGV)</label>
+          <div class="input-with-suffix">
+            <input type="number" id="impuestos" class="form-input" value="18" min="0" max="100">
+            <div class="input-suffix">%</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:1.5rem;">
+        <button class="btn btn-success" onclick="calcularPrecio()" style="padding:0.9rem 2.5rem;font-size:1rem;">🧮 Calcular precio de venta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== RESULT CARD ===================== -->
+  <div class="card animate-in hidden" id="card-resultado">
+    <div class="card-header">
+      <div class="card-icon icon-result">📈</div>
+      <div>
+        <div class="card-title">Resultado del Cálculo</div>
+        <div class="card-subtitle">Desglose completo de costos y precio final</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="breakdown-grid" id="breakdown-grid"></div>
+      <div class="result-card">
+        <div class="result-label">Precio de Venta Final</div>
+        <div class="result-price" id="precioVenta">S/. 0.00</div>
+        <div class="result-sub" id="result-sub">Incluye margen de ganancia e impuestos</div>
+      </div>
+      <div style="margin-top:1.5rem;">
+        <div class="section-divider">
+          <div class="divider-line"></div><span>📑 Detalle de cálculo</span><div class="divider-line"></div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr>
+              <th>Concepto</th>
+              <th style="text-align:right">Monto (S/.)</th>
+              <th style="text-align:right">%</th>
+            </tr></thead>
+            <tbody id="tablaCostos"></tbody>
+          </table>
+        </div>
+      </div>
+      <div style="display:flex;gap:1rem;justify-content:center;margin-top:2rem;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="exportarExcel()">📥 Exportar a Excel</button>
+        <button class="btn btn-outline" onclick="nuevoCalculo()">🔄 Nuevo cálculo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMAR ELIMINAR -->
+  <div class="modal-overlay hidden" id="modal-eliminar">
+    <div class="modal-box">
+      <div class="modal-title">⚠️ Eliminar usuario</div>
+      <div class="modal-sub">¿Estás seguro de que quieres eliminar al usuario <strong id="modal-dni-nombre"></strong>? Esta acción no se puede deshacer.</div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn btn-danger" style="background:var(--danger);color:white;" onclick="confirmarEliminar()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ============================================================
+//  STORAGE HELPERS
+// ============================================================
+const STORAGE_KEY    = 'pricepro_users';
+const ADMIN_KEY      = 'pricepro_admin';
+const TOKEN_KEY      = 'pricepro_decolecta_token';
+const RUC_HIST_KEY   = 'pricepro_ruc_history';
+
+function getAdminCreds() {
+  const saved = localStorage.getItem(ADMIN_KEY);
+  return saved ? JSON.parse(saved) : { dni: 'ADMIN', clave: 'admin123' };
+}
+function saveAdminCreds(creds) { localStorage.setItem(ADMIN_KEY, JSON.stringify(creds)); }
+function getUsers()            { const r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : []; }
+function saveUsers(u)          { localStorage.setItem(STORAGE_KEY, JSON.stringify(u)); }
+
+// ============================================================
+//  ESTADO GLOBAL
+// ============================================================
+let currentUser      = null;
+let pendingDeleteDni = null;
+let datosReporte     = {};
+
+// ============================================================
+//  AUTH
+// ============================================================
+function mostrarLogin() {
+  document.getElementById('login-form-section').classList.remove('hidden');
+  document.getElementById('registro-form-section').classList.add('hidden');
+}
+function mostrarRegistro() {
+  document.getElementById('registro-form-section').classList.remove('hidden');
+  document.getElementById('login-form-section').classList.add('hidden');
+  ['registro-alert','registro-alert-ok'].forEach(id => document.getElementById(id).style.display = 'none');
+  ['registro-dni','registro-nombre','registro-clave','registro-confirm-clave'].forEach(id => document.getElementById(id).value = '');
+}
+
+function validarIngreso() {
+  const dniInput   = document.getElementById('dni').value.trim().toUpperCase();
+  const claveInput = document.getElementById('clave').value;
+  if (!dniInput || !claveInput) { showLoginError('Completa todos los campos.'); return; }
+  const admin = getAdminCreds();
+  if (dniInput === admin.dni.toUpperCase() && claveInput === admin.clave) {
+    currentUser = { dni: dniInput, role: 'admin' };
+    mostrarAdmin(); return;
+  }
+  const users = getUsers();
+  const user  = users.find(u => u.dni.toUpperCase() === dniInput && u.clave === claveInput);
+  if (user) { currentUser = { ...user, role: 'user' }; mostrarCalculadora(); return; }
+  showLoginError('DNI o clave incorrectos. Contacta al administrador.');
+}
+
+function showLoginError(msg) {
+  const al = document.getElementById('login-alert');
+  al.textContent = '⚠️ ' + msg; al.style.display = 'block';
+  document.querySelectorAll('#card-login .form-input').forEach(i => {
+    i.classList.add('error');
+    setTimeout(() => i.classList.remove('error'), 1600);
+  });
+  setTimeout(() => al.style.display = 'none', 3500);
+}
+
+function registrarUsuario() {
+  const dni        = document.getElementById('registro-dni').value.trim().toUpperCase();
+  const nombre     = document.getElementById('registro-nombre').value.trim();
+  const clave      = document.getElementById('registro-clave').value;
+  const confirmClave = document.getElementById('registro-confirm-clave').value;
+  const errEl = document.getElementById('registro-alert');
+  const okEl  = document.getElementById('registro-alert-ok');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+  if (!dni || !clave || !confirmClave) { showRegistroMsg(errEl,'⚠️ DNI, clave y confirmación son obligatorios.'); return; }
+  if (dni.length < 4)  { showRegistroMsg(errEl,'⚠️ El DNI debe tener al menos 4 caracteres.'); return; }
+  if (clave.length < 4){ showRegistroMsg(errEl,'⚠️ La clave debe tener al menos 4 caracteres.'); return; }
+  if (clave !== confirmClave){ showRegistroMsg(errEl,'⚠️ Las claves no coinciden.'); return; }
+  const admin = getAdminCreds();
+  if (dni === admin.dni.toUpperCase()){ showRegistroMsg(errEl,'⚠️ Ese DNI está reservado para el administrador.'); return; }
+  const users = getUsers();
+  if (users.find(u => u.dni.toUpperCase() === dni)){ showRegistroMsg(errEl,'⚠️ Ya existe un usuario con ese DNI.'); return; }
+  users.push({ dni, name: nombre, clave, dateRegistered: new Date().toISOString() });
+  saveUsers(users);
+  showRegistroMsg(okEl, `✅ Usuario ${dni}${nombre ? ' ('+nombre+')' : ''} registrado. Ahora puedes iniciar sesión.`);
+  setTimeout(() => { mostrarLogin(); document.getElementById('registro-dni').value = dni; document.getElementById('clave').value = clave; }, 2000);
+}
+function showRegistroMsg(el, msg) { el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 4000); }
+
+function cerrarSesion() {
+  currentUser = null;
+  ['card-admin','card-ruc','card-costos','card-resultado','steps-bar'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById('card-login').classList.remove('hidden');
+  document.getElementById('user-badge').style.display = 'none';
+  document.getElementById('admin-header-badge').classList.add('hidden');
+  document.getElementById('btn-logout').classList.add('hidden');
+  document.getElementById('dni').value = ''; document.getElementById('clave').value = '';
+  mostrarLogin();
+}
+
+// ============================================================
+//  VISTAS
+// ============================================================
+function mostrarAdmin() {
+  document.getElementById('card-login').classList.add('hidden');
+  document.getElementById('card-admin').classList.remove('hidden');
+  document.getElementById('admin-header-badge').classList.remove('hidden');
+  document.getElementById('btn-logout').classList.remove('hidden');
+  renderUserList();
+}
+
+function mostrarCalculadora() {
+  document.getElementById('card-login').classList.add('hidden');
+  document.getElementById('card-ruc').classList.remove('hidden');
+  document.getElementById('card-costos').classList.remove('hidden');
+  document.getElementById('steps-bar').classList.remove('hidden');
+  document.getElementById('user-badge').style.display = 'flex';
+  document.getElementById('user-dni-display').textContent = currentUser.dni;
+  document.getElementById('btn-logout').classList.remove('hidden');
+  setStep(2);
+  agregarFila('tablaFijos'); agregarFila('tablaVariables'); agregarFila('tablaOtros');
+  initRucModule();
+}
+
+// ============================================================
+//  ADMIN — USUARIOS
+// ============================================================
+function renderUserList() {
+  const list  = document.getElementById('user-list');
+  const users = getUsers();
+  const admin = getAdminCreds();
+  let html = `
+    <div class="user-item">
+      <div class="user-item-info">
+        <div class="user-avatar">⚙️</div>
+        <div><div class="user-dni">${admin.dni}</div><div class="user-name">Administrador del sistema</div></div>
+      </div>
+      <span class="user-role-badge role-admin">Admin</span>
+    </div>`;
+  if (!users.length) {
+    html += `<div class="empty-state">No hay usuarios registrados aún. Agrega el primero abajo ↓</div>`;
+  } else {
+    users.forEach(u => {
+      const initials = u.name ? u.name.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase() : u.dni.slice(0,2);
+      html += `
+        <div class="user-item">
+          <div class="user-item-info">
+            <div class="user-avatar">${initials}</div>
+            <div><div class="user-dni">${u.dni}</div><div class="user-name">${u.name||'Sin nombre'}</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.7rem;">
+            <span class="user-role-badge role-user">Usuario</span>
+            <button class="btn btn-danger btn-sm" onclick="solicitarEliminar('${u.dni}','${(u.name||u.dni).replace(/'/g,"\\'")}')">✕ Eliminar</button>
+          </div>
+        </div>`;
+    });
+  }
+  list.innerHTML = html;
+}
+
+function agregarUsuarioAdmin() {
+  const dni   = document.getElementById('new-dni').value.trim().toUpperCase();
+  const name  = document.getElementById('new-name').value.trim();
+  const clave = document.getElementById('new-clave').value;
+  const errEl = document.getElementById('add-user-alert-error');
+  const okEl  = document.getElementById('add-user-alert-ok');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+  if (!dni || !clave)  { showAdminMsg(errEl,'⚠️ DNI y clave son obligatorios.'); return; }
+  if (dni.length < 4)  { showAdminMsg(errEl,'⚠️ El DNI debe tener al menos 4 caracteres.'); return; }
+  if (clave.length < 4){ showAdminMsg(errEl,'⚠️ La clave debe tener al menos 4 caracteres.'); return; }
+  const admin = getAdminCreds();
+  if (dni === admin.dni.toUpperCase()){ showAdminMsg(errEl,'⚠️ Ese DNI está reservado para el admin.'); return; }
+  const users = getUsers();
+  if (users.find(u => u.dni.toUpperCase() === dni)){ showAdminMsg(errEl,'⚠️ Ya existe un usuario con ese DNI.'); return; }
+  users.push({ dni, name, clave, dateRegistered: new Date().toISOString() });
+  saveUsers(users);
+  document.getElementById('new-dni').value = ''; document.getElementById('new-name').value = ''; document.getElementById('new-clave').value = '';
+  showAdminMsg(okEl, `✅ Usuario ${dni}${name ? ' ('+name+')' : ''} agregado correctamente.`);
+  renderUserList();
+}
+function showAdminMsg(el,msg){ el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',3500); }
+
+function solicitarEliminar(dni,nombre) {
+  pendingDeleteDni = dni;
+  document.getElementById('modal-dni-nombre').textContent = nombre + ' (' + dni + ')';
+  document.getElementById('modal-eliminar').classList.remove('hidden');
+}
+function cerrarModal()     { pendingDeleteDni=null; document.getElementById('modal-eliminar').classList.add('hidden'); }
+function confirmarEliminar(){ if(!pendingDeleteDni)return; saveUsers(getUsers().filter(u=>u.dni!==pendingDeleteDni)); cerrarModal(); renderUserList(); }
+
+function cambiarClaveAdmin() {
+  const nv=document.getElementById('new-admin-clave').value;
+  const cf=document.getElementById('confirm-admin-clave').value;
+  const el=document.getElementById('change-pwd-alert');
+  el.className='alert';
+  if (!nv||!cf)  { showChangePwd(el,'alert-error','⚠️ Completa ambos campos.'); return; }
+  if (nv.length<4){ showChangePwd(el,'alert-error','⚠️ Mínimo 4 caracteres.'); return; }
+  if (nv!==cf)   { showChangePwd(el,'alert-error','⚠️ Las claves no coinciden.'); return; }
+  const admin=getAdminCreds(); admin.clave=nv; saveAdminCreds(admin);
+  document.getElementById('new-admin-clave').value=''; document.getElementById('confirm-admin-clave').value='';
+  showChangePwd(el,'alert-success-light','✅ Clave de admin actualizada correctamente.');
+}
+function showChangePwd(el,cls,msg){ el.className='alert '+cls; el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',3500); }
+
+// ============================================================
+//  MÓDULO DECOLECTA — CONSULTA RUC
+// ============================================================
+function initRucModule() {
+  const savedToken = localStorage.getItem(TOKEN_KEY);
+  if (savedToken) {
+    document.getElementById('decolecta-token').value = savedToken;
+    document.getElementById('ruc-token-alert').style.display = 'none';
+    document.getElementById('token-saved-indicator').style.display = 'block';
+  }
+  renderRucHistory();
+}
+
+function onTokenInput() {
+  const val = document.getElementById('decolecta-token').value.trim();
+  document.getElementById('ruc-token-alert').style.display = val ? 'none' : 'block';
+  document.getElementById('token-saved-indicator').style.display = 'none';
+}
+
+function guardarToken() {
+  const token = document.getElementById('decolecta-token').value.trim();
+  if (!token) { showRucAlert('⚠️ Ingresa un token antes de guardar.','alert-error'); return; }
+  localStorage.setItem(TOKEN_KEY, token);
+  document.getElementById('ruc-token-alert').style.display = 'none';
+  document.getElementById('token-saved-indicator').style.display = 'block';
+  showRucAlert('✅ Token guardado correctamente en este navegador.','alert-success-light');
+}
+
+function borrarToken() {
+  localStorage.removeItem(TOKEN_KEY);
+  document.getElementById('decolecta-token').value = '';
+  document.getElementById('ruc-token-alert').style.display = 'block';
+  document.getElementById('token-saved-indicator').style.display = 'none';
+  showRucAlert('🗑️ Token eliminado.','alert-warning');
+}
+
+function toggleTokenVis() {
+  const inp = document.getElementById('decolecta-token');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function onRucInput(input) {
+  input.value = input.value.replace(/\D/g,'');
+  document.getElementById('ruc-clear').style.display = input.value ? 'block' : 'none';
+}
+
+function limpiarRucInput() {
+  document.getElementById('ruc-numero').value = '';
+  document.getElementById('ruc-clear').style.display = 'none';
+  document.getElementById('ruc-result-container').innerHTML = '';
+  document.getElementById('ruc-search-alert').style.display = 'none';
+}
+
+function showRucAlert(msg, cls) {
+  const el = document.getElementById('ruc-search-alert');
+  el.className = 'alert ' + cls;
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+async function consultarRuc() {
+  const ruc   = document.getElementById('ruc-numero').value.trim();
+  const token = document.getElementById('decolecta-token').value.trim() || localStorage.getItem(TOKEN_KEY) || '';
+  const full  = document.getElementById('ruc-full').checked;
+
+  // Validaciones previas
+  if (!token) { showRucAlert('⚠️ Debes ingresar tu token de Decolecta primero.','alert-error'); return; }
+  if (!ruc)   { showRucAlert('⚠️ Ingresa un número de RUC.','alert-error'); return; }
+  if (ruc.length !== 11 || !/^\d+$/.test(ruc)) { showRucAlert('⚠️ El RUC debe tener exactamente 11 dígitos numéricos.','alert-error'); return; }
+
+  // UI loading
+  const spinner  = document.getElementById('ruc-spinner');
+  const btnConsultar = document.getElementById('btn-consultar-ruc');
+  spinner.style.display   = 'block';
+  btnConsultar.disabled   = true;
+  document.getElementById('ruc-result-container').innerHTML = '';
+  document.getElementById('ruc-search-alert').style.display = 'none';
+
+  const endpoint = full
+    ? `https://api.decolecta.com/v1/sunat/ruc/full?numero=${ruc}`
+    : `https://api.decolecta.com/v1/sunat/ruc?numero=${ruc}`;
+
+  try {
+    const resp = await fetch(endpoint, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    });
+
+    spinner.style.display = 'none';
+    btnConsultar.disabled = false;
+
+    if (resp.status === 401) { showRucAlert('❌ Token inválido o expirado. Verifica tu token de Decolecta.','alert-error'); return; }
+    if (resp.status === 422) { showRucAlert('❌ RUC inválido según SUNAT.','alert-error'); return; }
+    if (resp.status === 429) { showRucAlert('⚠️ Demasiadas peticiones. Espera un momento antes de volver a consultar.','alert-warning'); return; }
+    if (!resp.ok)            { showRucAlert(`❌ Error ${resp.status}. Inténtalo de nuevo.`,'alert-error'); return; }
+
+    const data = await resp.json();
+    renderRucResult(data, ruc);
+    guardarEnHistorial(ruc, data);
+    renderRucHistory();
+
+  } catch(err) {
+    spinner.style.display = 'none';
+    btnConsultar.disabled = false;
+    // CORS en desarrollo local — mostrar resultado de ejemplo para testing
+    if (err.name === 'TypeError' && err.message.includes('fetch')) {
+      showRucAlert('⚠️ No se pudo conectar con Decolecta (posible bloqueo CORS en local). Prueba desde tu servidor web.','alert-warning');
+    } else {
+      showRucAlert('❌ Error de red: ' + err.message,'alert-error');
+    }
+  }
+}
+
+function renderRucResult(data, ruc) {
+  const estado    = (data.estado || '').toUpperCase();
+  const condicion = (data.condicion || '').toUpperCase();
+
+  const estadoClass = estado === 'ACTIVO' ? 'estado-activo' : (estado.includes('BAJA') ? 'estado-baja' : 'estado-otro');
+  const condClass   = condicion === 'HABIDO' ? 'habido' : 'no-habido';
+
+  let extraFields = '';
+  if (data.buen_contribuyente)    extraFields += renderField('Buen Contribuyente', data.buen_contribuyente);
+  if (data.agente_retencion)      extraFields += renderField('Agente de Retención', data.agente_retencion);
+  if (data.sistema_emision)       extraFields += renderField('Sistema Emisión', data.sistema_emision);
+  if (data.actividad_economica)   extraFields += renderField('Actividad Económica', data.actividad_economica);
+  if (data.fecha_inscripcion)     extraFields += renderField('Fecha Inscripción', data.fecha_inscripcion);
+  if (data.inicio_actividades)    extraFields += renderField('Inicio Actividades', data.inicio_actividades);
+
+  document.getElementById('ruc-result-container').innerHTML = `
+    <div class="ruc-result-card">
+      <div class="ruc-result-header">
+        <div>
+          <div class="ruc-result-razon">${data.razon_social || 'Sin razón social'}</div>
+          <div class="ruc-result-num">RUC: ${data.numero_documento || ruc}</div>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-direction:column;align-items:flex-end;">
+          <span class="ruc-estado-badge ${estadoClass}">${estado || 'Sin estado'}</span>
+          <span class="ruc-condicion-badge ${condClass}">${condicion || '—'}</span>
+        </div>
+      </div>
+      <div class="ruc-result-body">
+        <div class="ruc-fields-grid">
+          ${renderField('Dirección', [data.direccion, data.distrito, data.provincia, data.departamento].filter(Boolean).join(', ') || '—')}
+          ${renderField('Distrito', data.distrito || '—')}
+          ${renderField('Provincia', data.provincia || '—')}
+          ${renderField('Departamento', data.departamento || '—')}
+          ${extraFields}
+        </div>
+      </div>
+      <div class="ruc-result-footer">
+        <span class="ruc-timestamp">Consultado: ${new Date().toLocaleString('es-PE')}</span>
+        <button class="btn btn-outline btn-sm" onclick="copiarDatosRuc(${JSON.stringify(data).replace(/"/g,'&quot;')})">📋 Copiar datos</button>
+      </div>
+    </div>`;
+}
+
+function renderField(label, value) {
+  return `<div class="ruc-field">
+    <div class="ruc-field-label">${label}</div>
+    <div class="ruc-field-value">${value}</div>
+  </div>`;
+}
+
+function copiarDatosRuc(data) {
+  const texto = Object.entries(data).map(([k,v]) => `${k}: ${v}`).join('\n');
+  navigator.clipboard.writeText(texto).then(() => showRucAlert('📋 Datos copiados al portapapeles.','alert-success-light'));
+}
+
+// ---- Historial ----
+function getRucHistory() {
+  const raw = localStorage.getItem(RUC_HIST_KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+function saveRucHistory(h) { localStorage.setItem(RUC_HIST_KEY, JSON.stringify(h)); }
+
+function guardarEnHistorial(ruc, data) {
+  let h = getRucHistory();
+  // Eliminar duplicado existente del mismo RUC
+  h = h.filter(e => e.ruc !== ruc);
+  h.unshift({
+    ruc,
+    razon_social: data.razon_social || '',
+    estado: data.estado || '',
+    fecha: new Date().toISOString()
+  });
+  // Máximo 20 entradas
+  if (h.length > 20) h = h.slice(0, 20);
+  saveRucHistory(h);
+}
+
+function renderRucHistory() {
+  const h   = getRucHistory();
+  const el  = document.getElementById('ruc-history-container');
+  if (!h.length) {
+    el.innerHTML = `<div class="ruc-empty-history">Aún no has consultado ningún RUC en esta sesión.</div>`;
+    return;
+  }
+  const items = h.map(e => {
+    const fecha = new Date(e.fecha).toLocaleString('es-PE',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const estadoClass = (e.estado||'').toUpperCase() === 'ACTIVO' ? 'estado-activo' : 'estado-baja';
+    return `<div class="ruc-history-item" onclick="cargarRucDesdeHistorial('${e.ruc}')">
+      <span class="ruc-history-ruc">${e.ruc}</span>
+      <span class="ruc-history-name">${e.razon_social || '—'}</span>
+      <span class="ruc-estado-badge ${estadoClass}" style="font-size:0.6rem;">${e.estado||'—'}</span>
+      <span class="ruc-history-date">${fecha}</span>
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div class="ruc-history-list">${items}</div>`;
+}
+
+function cargarRucDesdeHistorial(ruc) {
+  document.getElementById('ruc-numero').value = ruc;
+  document.getElementById('ruc-clear').style.display = 'block';
+  document.getElementById('card-ruc').scrollIntoView({ behavior:'smooth', block:'start' });
+  consultarRuc();
+}
+
+function limpiarHistorial() {
+  localStorage.removeItem(RUC_HIST_KEY);
+  renderRucHistory();
+  showRucAlert('🗑️ Historial de consultas eliminado.','alert-warning');
+}
+
+// ============================================================
+//  CALCULADORA
+// ============================================================
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('step'+i);
+    el.className = 'step ' + (i < n ? 'done' : i === n ? 'active' : 'pending');
+  });
+}
+
+function agregarFila(tablaId) {
+  const tbody = document.getElementById(tablaId).querySelector('tbody');
+  const fila  = document.createElement('tr');
+  fila.innerHTML = `
+    <td><input type="text" class="table-input" placeholder="Nombre del producto"></td>
+    <td><input type="number" class="table-input" value="1" min="1" oninput="actualizarSubtotal('${tablaId}', this)"></td>
+    <td><input type="text" class="table-input" placeholder="Unidad"></td>
+    <td><input type="number" class="table-input" value="0" min="0" step="0.01" oninput="actualizarSubtotal('${tablaId}', this)"></td>
+    <td class="subtotal subtotal-cell">0.00</td>
+    <td style="text-align:center"><button class="btn btn-danger btn-sm" onclick="eliminarFila('${tablaId}', this)">✕</button></td>`;
+  tbody.appendChild(fila);
+  fila.querySelector('input').focus();
+}
+
+function actualizarSubtotal(tablaId, el) {
+  const fila = el.closest('tr');
+  const cant = parseFloat(fila.children[1].querySelector('input').value) || 0;
+  const prec = parseFloat(fila.children[3].querySelector('input').value) || 0;
+  fila.querySelector('.subtotal').textContent = (cant * prec).toFixed(2);
+  calcularTotal(tablaId);
+}
+
+function eliminarFila(tablaId, btn) { btn.closest('tr').remove(); calcularTotal(tablaId); }
+
+function calcularTotal(tablaId) {
+  let total = 0;
+  document.querySelectorAll(`#${tablaId} .subtotal`).forEach(c => total += parseFloat(c.textContent) || 0);
+  const ids = { tablaFijos:'totalFijos', tablaVariables:'totalVariables', tablaOtros:'totalOtros' };
+  document.getElementById(ids[tablaId]).textContent = total.toFixed(2);
+}
+
+function calcularPrecio() {
+  const fijos     = parseFloat(document.getElementById('totalFijos').textContent)     || 0;
+  const variables = parseFloat(document.getElementById('totalVariables').textContent) || 0;
+  const otros     = parseFloat(document.getElementById('totalOtros').textContent)     || 0;
+  const margen    = parseFloat(document.getElementById('margen').value)    || 0;
+  const impuestos = parseFloat(document.getElementById('impuestos').value) || 0;
+
+  const costoTotal  = fijos + variables + otros;
+  const conMargen   = costoTotal * (1 + margen / 100);
+  const precioFinal = conMargen  * (1 + impuestos / 100);
+
+  document.getElementById('breakdown-grid').innerHTML = `
+    <div class="breakdown-item">
+      <div class="breakdown-item-label">Total Costos</div>
+      <div class="breakdown-item-val blue">S/. ${costoTotal.toFixed(2)}</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-item-label">Con Margen (${margen}%)</div>
+      <div class="breakdown-item-val green">S/. ${conMargen.toFixed(2)}</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-item-label">IGV (${impuestos}%)</div>
+      <div class="breakdown-item-val amber">S/. ${(precioFinal - conMargen).toFixed(2)}</div>
+    </div>`;
+
+  document.getElementById('precioVenta').textContent = `S/. ${precioFinal.toFixed(2)}`;
+  document.getElementById('result-sub').textContent  = `Margen ${margen}% · IGV ${impuestos}% · Costo base S/. ${costoTotal.toFixed(2)}`;
+
+  const pct = v => costoTotal > 0 ? ((v / precioFinal) * 100).toFixed(1) + '%' : '—';
+  document.getElementById('tablaCostos').innerHTML = `
+    <tr><td>Costos Fijos</td><td style="text-align:right;font-family:'JetBrains Mono',monospace">${fijos.toFixed(2)}</td><td style="text-align:right;color:var(--text-muted)">${pct(fijos)}</td></tr>
+    <tr><td>Costos Variables</td><td style="text-align:right;font-family:'JetBrains Mono',monospace">${variables.toFixed(2)}</td><td style="text-align:right;color:var(--text-muted)">${pct(variables)}</td></tr>
+    <tr><td>Costos Otros</td><td style="text-align:right;font-family:'JetBrains Mono',monospace">${otros.toFixed(2)}</td><td style="text-align:right;color:var(--text-muted)">${pct(otros)}</td></tr>
+    <tr style="background:rgba(37,99,235,0.05)"><td><strong>Total Costos</strong></td><td style="text-align:right;font-family:'JetBrains Mono',monospace"><strong>${costoTotal.toFixed(2)}</strong></td><td style="text-align:right;color:var(--text-muted)"><strong>${pct(costoTotal)}</strong></td></tr>
+    <tr><td>Margen de Ganancia (${margen}%)</td><td style="text-align:right;font-family:'JetBrains Mono',monospace;color:var(--success)">${(conMargen - costoTotal).toFixed(2)}</td><td style="text-align:right;color:var(--text-muted)">${((conMargen-costoTotal)/precioFinal*100).toFixed(1)}%</td></tr>
+    <tr><td>IGV (${impuestos}%)</td><td style="text-align:right;font-family:'JetBrains Mono',monospace;color:var(--warning)">${(precioFinal - conMargen).toFixed(2)}</td><td style="text-align:right;color:var(--text-muted)">${((precioFinal-conMargen)/precioFinal*100).toFixed(1)}%</td></tr>
+    <tr style="background:var(--primary-light)"><td><strong>💰 Precio de Venta Final</strong></td><td style="text-align:right;font-family:'JetBrains Mono',monospace;color:var(--primary);font-size:1.05rem"><strong>${precioFinal.toFixed(2)}</strong></td><td style="text-align:right">100%</td></tr>`;
+
+  document.getElementById('card-resultado').classList.remove('hidden');
+  setStep(3);
+  document.getElementById('card-resultado').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  datosReporte = {
+    Usuario: currentUser?.dni || '',
+    Costos_Fijos: fijos,
+    Costos_Variables: variables,
+    Costos_Otros: otros,
+    Total_Costos: costoTotal.toFixed(2),
+    Margen: margen + '%',
+    Impuestos: impuestos + '%',
+    Precio_Venta: precioFinal.toFixed(2)
+  };
+}
+
+function nuevoCalculo() {
+  document.getElementById('card-resultado').classList.add('hidden');
+  document.getElementById('card-costos').scrollIntoView({ behavior: 'smooth' });
+  setStep(2);
+}
+
+function exportarExcel() {
+  function obtenerDatosTabla(tablaId, tipo) {
+    const filas = document.querySelectorAll(`#${tablaId} tbody tr`);
+    let datos = [];
+    filas.forEach(fila => {
+      const descripcion = fila.children[0].querySelector('input').value || '';
+      const cantidad    = parseFloat(fila.children[1].querySelector('input').value) || 0;
+      const unidad      = fila.children[2].querySelector('input').value || '';
+      const precio      = parseFloat(fila.children[3].querySelector('input').value) || 0;
+      const subtotal    = parseFloat(fila.children[4].textContent) || 0;
+      if (descripcion || subtotal > 0) datos.push({ Tipo: tipo, Descripción: descripcion, Cantidad: cantidad, Unidad: unidad, Precio_Unitario: precio, Subtotal: subtotal });
+    });
+    return datos;
+  }
+
+  const datosFijos     = obtenerDatosTabla('tablaFijos', 'Costos Fijos');
+  const datosVariables = obtenerDatosTabla('tablaVariables', 'Costos Variables');
+  const datosOtros     = obtenerDatosTabla('tablaOtros', 'Costos Otros');
+  const todosLosDatos  = [...datosFijos, ...datosVariables, ...datosOtros];
+
+  const totalFijos     = parseFloat(document.getElementById('totalFijos').textContent)     || 0;
+  const totalVariables = parseFloat(document.getElementById('totalVariables').textContent) || 0;
+  const totalOtros     = parseFloat(document.getElementById('totalOtros').textContent)     || 0;
+  const margen    = parseFloat(document.getElementById('margen').value)    || 0;
+  const impuestos = parseFloat(document.getElementById('impuestos').value) || 0;
+  const costoTotal  = totalFijos + totalVariables + totalOtros;
+  const utilidad    = costoTotal * (margen / 100);
+  const conMargen   = costoTotal + utilidad;
+  const igv         = conMargen * (impuestos / 100);
+  const precioFinal = conMargen + igv;
+  const fecha       = new Date();
+
+  const wb = XLSX.utils.book_new();
+  const resumen = [
+    { Concepto:'Usuario',             Valor: currentUser?.dni || '' },
+    { Concepto:'Fecha y Hora',        Valor: fecha.toLocaleString() },
+    { Concepto:'Total Costos Fijos',  Valor: totalFijos },
+    { Concepto:'Total Costos Variables', Valor: totalVariables },
+    { Concepto:'Total Costos Otros',  Valor: totalOtros },
+    { Concepto:'Total General',       Valor: costoTotal },
+    { Concepto:'Utilidad (Margen)',   Valor: utilidad },
+    { Concepto:'IGV',                 Valor: igv },
+    { Concepto:'Precio de Venta Final', Valor: precioFinal }
+  ];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumen),       'Resumen Ejecutivo');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(todosLosDatos), 'Detalle de Costos');
+  const analisis = [
+    { Categoría:'Costos Fijos',     Total:totalFijos,     Participación: costoTotal>0?((totalFijos/costoTotal)*100).toFixed(2)+'%':'0%' },
+    { Categoría:'Costos Variables', Total:totalVariables, Participación: costoTotal>0?((totalVariables/costoTotal)*100).toFixed(2)+'%':'0%' },
+    { Categoría:'Costos Otros',     Total:totalOtros,     Participación: costoTotal>0?((totalOtros/costoTotal)*100).toFixed(2)+'%':'0%' }
+  ];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(analisis), 'Análisis Financiero');
+  XLSX.writeFile(wb, `Reporte_PricePro_${currentUser?.dni||'Usuario'}_${fecha.getFullYear()}${fecha.getMonth()+1}${fecha.getDate()}.xlsx`);
+}
+
+// ============================================================
+//  EVENTOS GLOBALES
+// ============================================================
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !document.getElementById('card-login').classList.contains('hidden')) validarIngreso();
+  if (e.key === 'Escape') cerrarModal();
+});
+document.getElementById('modal-eliminar').addEventListener('click', function(e) {
+  if (e.target === this) cerrarModal();
+});
+</script>
+</body>
+</html>
