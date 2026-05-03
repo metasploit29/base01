@@ -1117,29 +1117,35 @@ async function consultarRuc() {
   const token = document.getElementById('decolecta-token').value.trim() || localStorage.getItem(TOKEN_KEY) || '';
   const full  = document.getElementById('ruc-full').checked;
 
+  // ⚙️ CAMBIA ESTA URL por la de tu Cloudflare Worker luego de desplegarlo
+  const WORKER_URL = 'https://decolecta-proxy.cristianestudios29.workers.dev/';
+
   // Validaciones previas
   if (!token) { showRucAlert('⚠️ Debes ingresar tu token de Decolecta primero.','alert-error'); return; }
   if (!ruc)   { showRucAlert('⚠️ Ingresa un número de RUC.','alert-error'); return; }
   if (ruc.length !== 11 || !/^\d+$/.test(ruc)) { showRucAlert('⚠️ El RUC debe tener exactamente 11 dígitos numéricos.','alert-error'); return; }
 
+  if (WORKER_URL.includes('TU-WORKER')) {
+    showRucAlert('⚙️ Configura la URL de tu Cloudflare Worker en el código (variable WORKER_URL).','alert-warning');
+    return;
+  }
+
   // UI loading
-  const spinner  = document.getElementById('ruc-spinner');
+  const spinner      = document.getElementById('ruc-spinner');
   const btnConsultar = document.getElementById('btn-consultar-ruc');
-  spinner.style.display   = 'block';
-  btnConsultar.disabled   = true;
+  spinner.style.display  = 'block';
+  btnConsultar.disabled  = true;
   document.getElementById('ruc-result-container').innerHTML = '';
   document.getElementById('ruc-search-alert').style.display = 'none';
 
-  const endpoint = full
-    ? `https://api.decolecta.com/v1/sunat/ruc/full?numero=${ruc}`
-    : `https://api.decolecta.com/v1/sunat/ruc?numero=${ruc}`;
+  const proxyUrl = `${WORKER_URL}?numero=${ruc}${full ? '&full=1' : ''}`;
 
   try {
-    const resp = await fetch(endpoint, {
+    const resp = await fetch(proxyUrl, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
+        'Content-Type':          'application/json',
+        'X-Decolecta-Token':     token
       }
     });
 
@@ -1159,12 +1165,7 @@ async function consultarRuc() {
   } catch(err) {
     spinner.style.display = 'none';
     btnConsultar.disabled = false;
-    // CORS en desarrollo local — mostrar resultado de ejemplo para testing
-    if (err.name === 'TypeError' && err.message.includes('fetch')) {
-      showRucAlert('⚠️ No se pudo conectar con Decolecta (posible bloqueo CORS en local). Prueba desde tu servidor web.','alert-warning');
-    } else {
-      showRucAlert('❌ Error de red: ' + err.message,'alert-error');
-    }
+    showRucAlert('❌ Error de red al contactar el Worker: ' + err.message,'alert-error');
   }
 }
 
