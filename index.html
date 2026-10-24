@@ -3,25 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LUMIÈRE PARFUMS | Fragancias de Lujo</title>
+<title>LUMIÈRE PARFUMS | Fragancias de Lujo y Feromonas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   
   :root {
     --gold: #c9a961;
+    --gold-light: #e8d4a2;
     --gold-dark: #8b7a3f;
-    --black: #1a1a1a;
+    --black: #0a0a0a;
+    --dark-gray: #1a1a1a;
     --cream: #faf7f2;
     --rose: #d4a5a5;
     --text: #333;
+    --text-light: #666;
   }
   
   body {
-    font-family: 'Georgia', serif;
+    font-family: 'Montserrat', sans-serif;
     background: var(--cream);
     color: var(--text);
     line-height: 1.6;
   }
+  
+  h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; }
   
   /* HEADER */
   header {
@@ -31,7 +39,8 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    border-bottom: 1px solid var(--gold);
   }
   
   .nav-container {
@@ -45,30 +54,52 @@
   }
   
   .logo {
-    font-size: 1.8rem;
-    letter-spacing: 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    letter-spacing: 6px;
     color: var(--gold);
-    font-weight: bold;
+    font-weight: 600;
   }
   
-  .logo span { font-style: italic; font-size: 0.9rem; display: block; letter-spacing: 2px; }
+  .logo span { 
+    font-style: italic; 
+    font-size: 0.85rem; 
+    display: block; 
+    letter-spacing: 3px;
+    color: var(--gold-light);
+    margin-top: -5px;
+  }
   
   nav ul {
     display: flex;
     list-style: none;
-    gap: 2rem;
+    gap: 2.5rem;
   }
   
   nav a {
     color: var(--cream);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     letter-spacing: 2px;
     text-transform: uppercase;
-    transition: color 0.3s;
+    transition: all 0.3s;
     cursor: pointer;
+    font-weight: 500;
+    position: relative;
   }
   
+  nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--gold);
+    transition: width 0.3s;
+  }
+  
+  nav a:hover::after { width: 100%; }
   nav a:hover { color: var(--gold); }
   
   .header-icons {
@@ -84,10 +115,10 @@
     cursor: pointer;
     font-size: 1.3rem;
     position: relative;
-    transition: color 0.3s;
+    transition: all 0.3s;
   }
   
-  .icon-btn:hover { color: var(--gold); }
+  .icon-btn:hover { color: var(--gold); transform: scale(1.1); }
   
   .cart-count {
     position: absolute;
@@ -107,8 +138,9 @@
   
   /* HERO */
   .hero {
-    height: 70vh;
-    background: linear-gradient(135deg, #1a1a1a 0%, #3d2f1f 50%, #c9a961 100%);
+    height: 85vh;
+    background: linear-gradient(135deg, rgba(10,10,10,0.9) 0%, rgba(61,47,31,0.8) 50%, rgba(201,169,97,0.6) 100%),
+                url('https://images.unsplash.com/photo-1541643600914-78b084683601?w=1920&q=80') center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -121,93 +153,140 @@
   .hero::before {
     content: '';
     position: absolute;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(201,169,97,0.3), transparent);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(201,169,97,0.2), transparent);
     border-radius: 50%;
-    animation: float 6s ease-in-out infinite;
+    animation: float 8s ease-in-out infinite;
   }
   
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-30px); }
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-50px) scale(1.1); }
   }
   
   .hero-content {
     z-index: 2;
     animation: fadeIn 1.5s ease-in;
+    max-width: 800px;
+    padding: 2rem;
   }
   
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
   }
   
   .hero h1 {
-    font-size: 4rem;
-    letter-spacing: 8px;
+    font-size: 5rem;
+    letter-spacing: 12px;
     margin-bottom: 1rem;
     color: var(--gold);
+    font-weight: 300;
   }
   
   .hero p {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-style: italic;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     letter-spacing: 2px;
+    font-weight: 300;
   }
   
   .btn {
     background: var(--gold);
     color: var(--black);
     border: none;
-    padding: 1rem 2.5rem;
+    padding: 1.2rem 3rem;
     font-size: 0.9rem;
     letter-spacing: 3px;
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.3s;
-    font-weight: bold;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
   }
   
   .btn:hover {
     background: var(--cream);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(201,169,97,0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(201,169,97,0.4);
+  }
+  
+  /* FEATURES */
+  .features {
+    background: var(--black);
+    padding: 3rem 2rem;
+    color: var(--cream);
+  }
+  
+  .features-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+    text-align: center;
+  }
+  
+  .feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .feature-icon {
+    font-size: 2.5rem;
+    color: var(--gold);
+  }
+  
+  .feature-item h3 {
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  
+  .feature-item p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    line-height: 1.8;
   }
   
   /* CATEGORIES */
   .categories {
-    padding: 4rem 2rem;
+    padding: 5rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
   }
   
   .section-title {
     text-align: center;
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: var(--black);
     margin-bottom: 0.5rem;
-    letter-spacing: 4px;
+    letter-spacing: 6px;
+    font-weight: 400;
   }
   
   .section-subtitle {
     text-align: center;
     color: var(--gold-dark);
     font-style: italic;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
     letter-spacing: 2px;
+    font-size: 1.1rem;
   }
   
   .category-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
   }
   
   .category-card {
-    height: 200px;
-    border-radius: 8px;
+    height: 250px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -219,29 +298,36 @@
     text-transform: uppercase;
     position: relative;
     overflow: hidden;
+    background-size: cover;
+    background-position: center;
   }
   
-  .category-card::after {
+  .category-card::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.4);
     transition: background 0.4s;
   }
   
-  .category-card:hover::after { background: rgba(0,0,0,0.5); }
+  .category-card:hover::before { background: rgba(0,0,0,0.6); }
   .category-card:hover { transform: scale(1.03); }
   
-  .category-card span { z-index: 2; font-weight: bold; }
+  .category-card span { 
+    z-index: 2; 
+    font-weight: 600;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+  }
   
-  .cat-mujer { background: linear-gradient(135deg, #d4a5a5, #8b5e5e); }
-  .cat-hombre { background: linear-gradient(135deg, #2c3e50, #1a1a1a); }
-  .cat-unisex { background: linear-gradient(135deg, #c9a961, #8b7a3f); }
-  .cat-nuevos { background: linear-gradient(135deg, #6b4423, #3d2f1f); }
+  .cat-mujer { background-image: url('https://images.unsplash.com/photo-1588405748880-12d1d2a59d75?w=600&q=80'); }
+  .cat-hombre { background-image: url('https://images.unsplash.com/photo-1594035910387-fea47794261f?w=600&q=80'); }
+  .cat-unisex { background-image: url('https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80'); }
+  .cat-feromonas { background-image: url('https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=600&q=80'); }
   
   /* PRODUCTS */
   .products-section {
-    padding: 4rem 2rem;
+    padding: 5rem 2rem;
     background: white;
   }
   
@@ -254,7 +340,7 @@
     display: flex;
     justify-content: center;
     gap: 1rem;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
     flex-wrap: wrap;
   }
   
@@ -262,82 +348,64 @@
     background: transparent;
     border: 2px solid var(--gold);
     color: var(--black);
-    padding: 0.6rem 1.5rem;
+    padding: 0.8rem 2rem;
     cursor: pointer;
     letter-spacing: 2px;
     text-transform: uppercase;
     font-size: 0.85rem;
     transition: all 0.3s;
+    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
   }
   
   .filter-btn:hover, .filter-btn.active {
     background: var(--gold);
     color: var(--black);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(201,169,97,0.3);
   }
   
   .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2.5rem;
   }
   
   .product-card {
     background: var(--cream);
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
     transition: all 0.4s;
     cursor: pointer;
     position: relative;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
   }
   
   .product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
   }
   
   .product-image {
-    height: 280px;
+    height: 350px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
   }
   
-  .bottle {
-    width: 100px;
-    height: 180px;
-    border-radius: 10px 10px 20px 20px;
-    position: relative;
-    box-shadow: inset -15px 0 30px rgba(0,0,0,0.3), 0 10px 30px rgba(0,0,0,0.2);
-    transition: transform 0.4s;
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
   }
   
-  .bottle::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 25px;
-    background: var(--gold);
-    border-radius: 3px;
+  .product-card:hover .product-image img {
+    transform: scale(1.1);
   }
-  
-  .bottle::after {
-    content: '';
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 15px;
-    background: var(--gold-dark);
-    border-radius: 2px;
-  }
-  
-  .product-card:hover .bottle { transform: scale(1.1) rotate(-3deg); }
   
   .product-badge {
     position: absolute;
@@ -345,16 +413,17 @@
     right: 15px;
     background: var(--gold);
     color: var(--black);
-    padding: 0.3rem 0.8rem;
+    padding: 0.4rem 1rem;
     font-size: 0.75rem;
     letter-spacing: 1px;
     text-transform: uppercase;
-    font-weight: bold;
+    font-weight: 600;
     border-radius: 3px;
+    z-index: 2;
   }
   
   .product-info {
-    padding: 1.5rem;
+    padding: 2rem;
     text-align: center;
   }
   
@@ -363,20 +432,39 @@
     color: var(--gold-dark);
     letter-spacing: 2px;
     text-transform: uppercase;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
   }
   
   .product-name {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     color: var(--black);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+  }
+  
+  .product-description {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-style: italic;
+  }
+  
+  .product-notes {
+    font-size: 0.8rem;
+    color: var(--gold-dark);
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background: rgba(201,169,97,0.1);
+    border-radius: 5px;
   }
   
   .product-price {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     color: var(--gold-dark);
-    font-weight: bold;
-    margin-bottom: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
   }
   
   .add-cart-btn {
@@ -384,22 +472,134 @@
     background: var(--black);
     color: var(--cream);
     border: none;
-    padding: 0.8rem;
+    padding: 1rem;
     cursor: pointer;
     letter-spacing: 2px;
     text-transform: uppercase;
     font-size: 0.85rem;
     transition: all 0.3s;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
   }
   
-  .add-cart-btn:hover { background: var(--gold); color: var(--black); }
+  .add-cart-btn:hover { 
+    background: var(--gold); 
+    color: var(--black);
+    transform: translateY(-2px);
+  }
+  
+  /* TESTIMONIALS */
+  .testimonials {
+    padding: 5rem 2rem;
+    background: var(--black);
+    color: var(--cream);
+  }
+  
+  .testimonials-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    margin-top: 3rem;
+  }
+  
+  .testimonial-card {
+    background: rgba(255,255,255,0.05);
+    padding: 2.5rem;
+    border-radius: 10px;
+    border: 1px solid rgba(201,169,97,0.3);
+    text-align: center;
+  }
+  
+  .testimonial-stars {
+    color: var(--gold);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .testimonial-text {
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+    font-size: 1rem;
+  }
+  
+  .testimonial-author {
+    color: var(--gold);
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  
+  /* NEWSLETTER */
+  .newsletter {
+    padding: 5rem 2rem;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    text-align: center;
+  }
+  
+  .newsletter-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .newsletter h2 {
+    font-size: 2.5rem;
+    color: var(--black);
+    margin-bottom: 1rem;
+    letter-spacing: 4px;
+  }
+  
+  .newsletter p {
+    color: var(--black);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+  
+  .newsletter-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .newsletter-form input {
+    flex: 1;
+    min-width: 250px;
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--black);
+    background: var(--cream);
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  .newsletter-form button {
+    padding: 1rem 2.5rem;
+    background: var(--black);
+    color: var(--gold);
+    border: none;
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: all 0.3s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  .newsletter-form button:hover {
+    background: var(--cream);
+    color: var(--black);
+  }
   
   /* CART MODAL */
   .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.8);
     z-index: 1000;
     justify-content: flex-end;
   }
@@ -409,9 +609,9 @@
   .cart-modal {
     background: var(--cream);
     width: 100%;
-    max-width: 450px;
+    max-width: 500px;
     height: 100vh;
-    padding: 2rem;
+    padding: 2.5rem;
     overflow-y: auto;
     animation: slideIn 0.3s ease-out;
   }
@@ -425,79 +625,91 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
     border-bottom: 2px solid var(--gold);
   }
   
   .cart-header h2 {
     color: var(--black);
-    letter-spacing: 3px;
+    letter-spacing: 4px;
+    font-size: 2rem;
   }
   
   .close-btn {
     background: none;
     border: none;
-    font-size: 1.8rem;
+    font-size: 2rem;
     cursor: pointer;
     color: var(--black);
+    transition: transform 0.3s;
   }
+  
+  .close-btn:hover { transform: rotate(90deg); }
   
   .cart-item {
     display: flex;
-    gap: 1rem;
-    padding: 1rem 0;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
     border-bottom: 1px solid #ddd;
     align-items: center;
   }
   
   .cart-item-img {
-    width: 60px;
-    height: 80px;
+    width: 80px;
+    height: 100px;
     border-radius: 5px;
+    object-fit: cover;
     flex-shrink: 0;
   }
   
   .cart-item-info { flex: 1; }
-  .cart-item-info h4 { font-size: 1rem; margin-bottom: 0.3rem; }
-  .cart-item-info p { font-size: 0.9rem; color: var(--gold-dark); font-weight: bold; }
+  .cart-item-info h4 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .cart-item-info p { font-size: 0.95rem; color: var(--gold-dark); font-weight: 600; }
   
   .qty-controls {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+    gap: 0.8rem;
+    margin-top: 0.8rem;
   }
   
   .qty-btn {
     background: var(--black);
     color: var(--cream);
     border: none;
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
     border-radius: 3px;
+    font-size: 1.2rem;
+    transition: background 0.3s;
   }
+  
+  .qty-btn:hover { background: var(--gold); color: var(--black); }
   
   .remove-btn {
     background: none;
     border: none;
     color: #c0392b;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    transition: transform 0.3s;
   }
   
+  .remove-btn:hover { transform: scale(1.2); }
+  
   .cart-total {
-    margin-top: 2rem;
-    padding-top: 1rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
     border-top: 2px solid var(--gold);
     text-align: right;
   }
   
   .cart-total h3 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     color: var(--black);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   .checkout-btn {
@@ -505,61 +717,76 @@
     background: var(--gold);
     color: var(--black);
     border: none;
-    padding: 1rem;
+    padding: 1.2rem;
     font-size: 1rem;
     letter-spacing: 3px;
     text-transform: uppercase;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
     transition: all 0.3s;
+    font-family: 'Montserrat', sans-serif;
   }
   
-  .checkout-btn:hover { background: var(--black); color: var(--gold); }
+  .checkout-btn:hover { 
+    background: var(--black); 
+    color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  }
   
   .empty-cart {
     text-align: center;
-    padding: 3rem 1rem;
+    padding: 4rem 1rem;
     color: #888;
     font-style: italic;
+    font-size: 1.1rem;
   }
   
   /* FOOTER */
   footer {
     background: var(--black);
     color: var(--cream);
-    padding: 3rem 2rem 1rem;
-    margin-top: 4rem;
+    padding: 4rem 2rem 1.5rem;
+    margin-top: 0;
   }
   
   .footer-content {
     max-width: 1400px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 3rem;
+    margin-bottom: 3rem;
   }
   
   .footer-col h3 {
     color: var(--gold);
-    margin-bottom: 1rem;
-    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    letter-spacing: 3px;
+    font-size: 1.3rem;
   }
   
   .footer-col ul { list-style: none; }
-  .footer-col li { margin-bottom: 0.5rem; }
+  .footer-col li { margin-bottom: 0.8rem; }
   .footer-col a {
     color: var(--cream);
     text-decoration: none;
     opacity: 0.8;
-    transition: opacity 0.3s;
+    transition: all 0.3s;
+    font-size: 0.95rem;
   }
-  .footer-col a:hover { opacity: 1; color: var(--gold); }
+  .footer-col a:hover { opacity: 1; color: var(--gold); padding-left: 5px; }
+  
+  .footer-col p {
+    opacity: 0.8;
+    line-height: 1.8;
+    font-size: 0.95rem;
+  }
   
   .footer-bottom {
     text-align: center;
-    padding-top: 2rem;
-    border-top: 1px solid #333;
+    padding-top: 2.5rem;
+    border-top: 1px solid rgba(201,169,97,0.3);
     opacity: 0.7;
     font-size: 0.9rem;
   }
@@ -567,17 +794,17 @@
   /* NOTIFICATION */
   .notification {
     position: fixed;
-    top: 100px;
+    top: 120px;
     right: 20px;
     background: var(--gold);
     color: var(--black);
-    padding: 1rem 2rem;
+    padding: 1.2rem 2.5rem;
     border-radius: 5px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     z-index: 2000;
     transform: translateX(400px);
     transition: transform 0.4s;
-    font-weight: bold;
+    font-weight: 600;
     letter-spacing: 1px;
   }
   
@@ -585,11 +812,12 @@
   
   /* RESPONSIVE */
   @media (max-width: 768px) {
-    .hero h1 { font-size: 2.5rem; letter-spacing: 4px; }
-    .hero p { font-size: 1rem; }
-    nav ul { gap: 1rem; font-size: 0.8rem; }
-    .logo { font-size: 1.3rem; }
-    .section-title { font-size: 1.8rem; }
+    .hero h1 { font-size: 3rem; letter-spacing: 6px; }
+    .hero p { font-size: 1.1rem; }
+    nav ul { gap: 1.5rem; font-size: 0.75rem; }
+    .logo { font-size: 1.5rem; }
+    .section-title { font-size: 2rem; }
+    .products-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -605,6 +833,7 @@
         <li><a onclick="filterProducts('mujer')">Mujer</a></li>
         <li><a onclick="filterProducts('hombre')">Hombre</a></li>
         <li><a onclick="filterProducts('unisex')">Unisex</a></li>
+        <li><a onclick="filterProducts('feromonas')">Feromonas</a></li>
         <li><a onclick="filterProducts('nuevo')">Nuevos</a></li>
       </ul>
     </nav>
@@ -629,6 +858,32 @@
   </div>
 </section>
 
+<!-- FEATURES -->
+<section class="features">
+  <div class="features-grid">
+    <div class="feature-item">
+      <div class="feature-icon">✨</div>
+      <h3>100% ORIGINALES</h3>
+      <p>Todas nuestras fragancias son auténticas y de la más alta calidad</p>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🚚</div>
+      <h3>ENVÍO GRATIS</h3>
+      <p>En pedidos superiores a $100. Entrega en 24-48 horas</p>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🎁</div>
+      <h3>MUESTRAS GRATIS</h3>
+      <p>Incluimos muestras de regalo en cada pedido</p>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">💎</div>
+      <h3>GARANTÍA TOTAL</h3>
+      <p>30 días para devoluciones sin preguntas</p>
+    </div>
+  </div>
+</section>
+
 <!-- CATEGORIES -->
 <section class="categories">
   <h2 class="section-title">COLECCIONES</h2>
@@ -643,8 +898,8 @@
     <div class="category-card cat-unisex" onclick="filterProducts('unisex')">
       <span>Unisex</span>
     </div>
-    <div class="category-card cat-nuevos" onclick="filterProducts('nuevo')">
-      <span>Novedades</span>
+    <div class="category-card cat-feromonas" onclick="filterProducts('feromonas')">
+      <span>Feromonas</span>
     </div>
   </div>
 </section>
@@ -653,17 +908,56 @@
 <section class="products-section">
   <div class="products-container">
     <h2 class="section-title">NUESTRAS FRAGANCIAS</h2>
-    <p class="section-subtitle">Perfumes de diseñador seleccionados para ti</p>
+    <p class="section-subtitle">Perfumes de diseñador y feromonas seleccionados para ti</p>
     
     <div class="filters">
       <button class="filter-btn active" onclick="filterProducts('all', this)">Todos</button>
       <button class="filter-btn" onclick="filterProducts('mujer', this)">Mujer</button>
       <button class="filter-btn" onclick="filterProducts('hombre', this)">Hombre</button>
       <button class="filter-btn" onclick="filterProducts('unisex', this)">Unisex</button>
+      <button class="filter-btn" onclick="filterProducts('feromonas', this)">Feromonas</button>
       <button class="filter-btn" onclick="filterProducts('nuevo', this)">Nuevos</button>
     </div>
     
     <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-container">
+    <h2 class="section-title" style="color: var(--gold);">LO QUE DICEN NUESTROS CLIENTES</h2>
+    <p class="section-subtitle" style="color: var(--gold-light);">Miles de clientes satisfechos</p>
+    
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Rose Éternelle es simplemente divino. Recibo cumplidos cada vez que lo uso. La duración es increíble, más de 12 horas."</p>
+        <div class="testimonial-author">— María González</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Los perfumes de feromonas funcionan de verdad. Mi confianza aumentó y la atención que recibo es notable. 100% recomendado."</p>
+        <div class="testimonial-author">— Carlos Rodríguez</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Servicio excepcional y productos de altísima calidad. Oud Royal es mi fragancia signature. No puedo vivir sin él."</p>
+        <div class="testimonial-author">— Ana Martínez</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <div class="newsletter-container">
+    <h2>ÚNETE AL CLUB LUMIÈRE</h2>
+    <p>Recibe ofertas exclusivas, lanzamientos anticipados y un 10% de descuento en tu primera compra</p>
+    <form class="newsletter-form" onsubmit="event.preventDefault(); showNotification('¡Gracias por suscribirte!');">
+      <input type="email" placeholder="Tu email" required>
+      <button type="submit">Suscribirse</button>
+    </form>
   </div>
 </section>
 
@@ -690,24 +984,26 @@
   <div class="footer-content">
     <div class="footer-col">
       <h3>LUMIÈRE</h3>
-      <p style="opacity:0.8;">Fragancias de lujo desde 2010. Descubre el arte de la perfumería.</p>
+      <p>Fragancias de lujo desde 2010. Descubre el arte de la perfumería con nuestra exclusiva selección de perfumes de diseñador y feromonas.</p>
     </div>
     <div class="footer-col">
       <h3>AYUDA</h3>
       <ul>
-        <li><a href="#">Envíos</a></li>
+        <li><a href="#">Envíos y Entregas</a></li>
         <li><a href="#">Devoluciones</a></li>
-        <li><a href="#">Guía de Tallas</a></li>
-        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Guía de Fragancias</a></li>
+        <li><a href="#">Preguntas Frecuentes</a></li>
+        <li><a href="#">Contacto</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h3>EMPRESA</h3>
       <ul>
         <li><a href="#">Sobre Nosotros</a></li>
-        <li><a href="#">Tiendas</a></li>
+        <li><a href="#">Nuestras Tiendas</a></li>
         <li><a href="#">Trabaja con Nosotros</a></li>
-        <li><a href="#">Contacto</a></li>
+        <li><a href="#">Programa de Afiliados</a></li>
+        <li><a href="#">Blog</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -717,29 +1013,199 @@
         <li><a href="#">Facebook</a></li>
         <li><a href="#">Pinterest</a></li>
         <li><a href="#">TikTok</a></li>
+        <li><a href="#">YouTube</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    © 2026 LUMIÈRE PARFUMS. Todos los derechos reservados.
+    © 2026 LUMIÈRE PARFUMS. Todos los derechos reservados. | Política de Privacidad | Términos y Condiciones
   </div>
 </footer>
 
 <script>
-  // PRODUCTOS
+  // PRODUCTOS CON IMÁGENES REALES Y DETALLES
   const products = [
-    { id: 1, name: "Rose Éternelle", brand: "LUMIÈRE", price: 189, category: "mujer", color: "linear-gradient(135deg, #f4c2c2, #d4a5a5)", badge: "Bestseller" },
-    { id: 2, name: "Noir Intense", brand: "LUMIÈRE", price: 220, category: "hombre", color: "linear-gradient(135deg, #2c3e50, #1a1a1a)", badge: null },
-    { id: 3, name: "Oud Royal", brand: "LUMIÈRE", price: 345, category: "unisex", color: "linear-gradient(135deg, #8b7a3f, #c9a961)", badge: "Premium" },
-    { id: 4, name: "Fleur de Nuit", brand: "LUMIÈRE", price: 165, category: "mujer", color: "linear-gradient(135deg, #b76e79, #6b4423)", badge: "Nuevo", tags: ["nuevo"] },
-    { id: 5, name: "Bois Sacré", brand: "LUMIÈRE", price: 275, category: "hombre", color: "linear-gradient(135deg, #6b4423, #3d2f1f)", badge: null },
-    { id: 6, name: "Ambre Doré", brand: "LUMIÈRE", price: 295, category: "unisex", color: "linear-gradient(135deg, #c9a961, #8b7a3f)", badge: "Exclusivo" },
-    { id: 7, name: "Jasmin Blanc", brand: "LUMIÈRE", price: 155, category: "mujer", color: "linear-gradient(135deg, #faf7f2, #d4a5a5)", badge: null },
-    { id: 8, name: "Cuir Sauvage", brand: "LUMIÈRE", price: 240, category: "hombre", color: "linear-gradient(135deg, #3d2f1f, #1a1a1a)", badge: "Nuevo", tags: ["nuevo"] },
-    { id: 9, name: "Vanille Mystique", brand: "LUMIÈRE", price: 198, category: "unisex", color: "linear-gradient(135deg, #d4a574, #8b6f3f)", badge: null },
-    { id: 10, name: "Iris Velours", brand: "LUMIÈRE", price: 320, category: "mujer", color: "linear-gradient(135deg, #9b7ebd, #6b4e8a)", badge: "Nuevo", tags: ["nuevo"] },
-    { id: 11, name: "Bleu Absolu", brand: "LUMIÈRE", price: 210, category: "hombre", color: "linear-gradient(135deg, #1e3a5f, #0a1929)", badge: null },
-    { id: 12, name: "Musc Blanc", brand: "LUMIÈRE", price: 175, category: "unisex", color: "linear-gradient(135deg, #e8e4dc, #b8b0a0)", badge: null }
+    { 
+      id: 1, 
+      name: "Rose Éternelle", 
+      brand: "LUMIÈRE", 
+      price: 189, 
+      category: "mujer", 
+      image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59d75?w=400&q=80",
+      description: "Una fragancia floral romántica que captura la esencia de las rosas de mayo",
+      notes: "Notas: Rosa de Mayo, Peonía, Almizcle Blanco",
+      badge: "Bestseller" 
+    },
+    { 
+      id: 2, 
+      name: "Noir Intense", 
+      brand: "LUMIÈRE", 
+      price: 220, 
+      category: "hombre", 
+      image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400&q=80",
+      description: "Misteriosa y sofisticada, perfecta para el hombre moderno",
+      notes: "Notas: Cuero, Ámbar, Madera de Oud",
+      badge: null 
+    },
+    { 
+      id: 3, 
+      name: "Oud Royal", 
+      brand: "LUMIÈRE", 
+      price: 345, 
+      category: "unisex", 
+      image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400&q=80",
+      description: "Lujo árabe en su máxima expresión, una fragancia única y exclusiva",
+      notes: "Notas: Oud, Rosa Damascena, Azafrán",
+      badge: "Premium" 
+    },
+    { 
+      id: 4, 
+      name: "Fleur de Nuit", 
+      brand: "LUMIÈRE", 
+      price: 165, 
+      category: "mujer", 
+      image: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&q=80",
+      description: "Elegancia nocturna con toques florales y orientales",
+      notes: "Notas: Jazmín, Vainilla, Pachulí",
+      badge: "Nuevo", 
+      tags: ["nuevo"] 
+    },
+    { 
+      id: 5, 
+      name: "Bois Sacré", 
+      brand: "LUMIÈRE", 
+      price: 275, 
+      category: "hombre", 
+      image: "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=400&q=80",
+      description: "Maderas nobles que evocan la fuerza y la elegancia masculina",
+      notes: "Notas: Sándalo, Cedro, Vetiver",
+      badge: null 
+    },
+    { 
+      id: 6, 
+      name: "Ambre Doré", 
+      brand: "LUMIÈRE", 
+      price: 295, 
+      category: "unisex", 
+      image: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=400&q=80",
+      description: "Ámbar dorado que envuelve con calidez y sensualidad",
+      notes: "Notas: Ámbar, Benjuí, Vainilla",
+      badge: "Exclusivo" 
+    },
+    { 
+      id: 7, 
+      name: "Jasmin Blanc", 
+      brand: "LUMIÈRE", 
+      price: 155, 
+      category: "mujer", 
+      image: "https://images.unsplash.com/photo-1587017539504-67cfbddac569?w=400&q=80",
+      description: "Pureza y frescura en una fragancia floral delicada",
+      notes: "Notas: Jazmín, Neroli, Almizcle",
+      badge: null 
+    },
+    { 
+      id: 8, 
+      name: "Cuir Sauvage", 
+      brand: "LUMIÈRE", 
+      price: 240, 
+      category: "hombre", 
+      image: "https://images.unsplash.com/photo-1595425964272-fc617fa25e92?w=400&q=80",
+      description: "Cuero salvaje para el hombre aventurero y audaz",
+      notes: "Notas: Cuero, Tabaco, Madera Ahumada",
+      badge: "Nuevo", 
+      tags: ["nuevo"] 
+    },
+    { 
+      id: 9, 
+      name: "Vanille Mystique", 
+      brand: "LUMIÈRE", 
+      price: 198, 
+      category: "unisex", 
+      image: "https://images.unsplash.com/photo-1610461888750-10bfc601b874?w=400&q=80",
+      description: "Vainilla oriental con un toque misterioso y adictivo",
+      notes: "Notas: Vainilla, Canela, Tonka",
+      badge: null 
+    },
+    { 
+      id: 10, 
+      name: "Iris Velours", 
+      brand: "LUMIÈRE", 
+      price: 320, 
+      category: "mujer", 
+      image: "https://images.unsplash.com/photo-1557170334-a9086d21c2c4?w=400&q=80",
+      description: "Iris aterciopelado que envuelve con elegancia y sofisticación",
+      notes: "Notas: Iris, Violeta, Almizcle",
+      badge: "Nuevo", 
+      tags: ["nuevo"] 
+    },
+    { 
+      id: 11, 
+      name: "Bleu Absolu", 
+      brand: "LUMIÈRE", 
+      price: 210, 
+      category: "hombre", 
+      image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400&q=80",
+      description: "Frescura marina con profundidad amaderada",
+      notes: "Notas: Bergamota, Lavanda, Madera de Cedro",
+      badge: null 
+    },
+    { 
+      id: 12, 
+      name: "Musc Blanc", 
+      brand: "LUMIÈRE", 
+      price: 175, 
+      category: "unisex", 
+      image: "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=400&q=80",
+      description: "Almizcle blanco limpio y reconfortante",
+      notes: "Notas: Almizcle Blanco, Algodón, Ámbar",
+      badge: null 
+    },
+    // PERFUMES DE FEROMONAS
+    { 
+      id: 13, 
+      name: "Attraction Homme", 
+      brand: "LUMIÈRE", 
+      price: 145, 
+      category: "feromonas", 
+      image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400&q=80",
+      description: "Feromonas masculinas que aumentan tu atractivo natural y confianza",
+      notes: "Feromonas + Notas: Ámbar, Madera, Almizcle",
+      badge: "Popular" 
+    },
+    { 
+      id: 14, 
+      name: "Attraction Femme", 
+      brand: "LUMIÈRE", 
+      price: 145, 
+      category: "feromonas", 
+      image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59d75?w=400&q=80",
+      description: "Feromonas femeninas que realzan tu sensualidad y magnetismo",
+      notes: "Feromonas + Notas: Rosa, Vainilla, Almizcle",
+      badge: "Popular" 
+    },
+    { 
+      id: 15, 
+      name: "Pheromone X", 
+      brand: "LUMIÈRE", 
+      price: 165, 
+      category: "feromonas", 
+      image: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=400&q=80",
+      description: "Fórmula avanzada de feromonas unisex para máxima atracción",
+      notes: "Feromonas + Notas: Ámbar, Oud, Especias",
+      badge: "Nuevo",
+      tags: ["nuevo"] 
+    },
+    { 
+      id: 16, 
+      name: "Seduction Night", 
+      brand: "LUMIÈRE", 
+      price: 155, 
+      category: "feromonas", 
+      image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400&q=80",
+      description: "Perfume con feromonas diseñado para noches memorables",
+      notes: "Feromonas + Notas: Cuero, Pachulí, Vainilla",
+      badge: null 
+    }
   ];
   
   let cart = JSON.parse(localStorage.getItem('lumiere_cart')) || [];
@@ -758,13 +1224,15 @@
     
     grid.innerHTML = filtered.map(p => `
       <div class="product-card">
-        <div class="product-image" style="background: ${p.color}">
-          <div class="bottle" style="background: ${p.color}"></div>
+        <div class="product-image">
+          <img src="${p.image}" alt="${p.name}">
           ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
         </div>
         <div class="product-info">
           <div class="product-brand">${p.brand}</div>
           <div class="product-name">${p.name}</div>
+          <div class="product-description">${p.description}</div>
+          <div class="product-notes">${p.notes}</div>
           <div class="product-price">$${p.price}</div>
           <button class="add-cart-btn" onclick="addToCart(${p.id})">Añadir al Carrito</button>
         </div>
@@ -780,7 +1248,10 @@
     if (btn) btn.classList.add('active');
     else {
       const btns = document.querySelectorAll('.filter-btn');
-      btns.forEach(b => { if (b.textContent.toLowerCase().includes(filter) || (filter === 'all' && b.textContent === 'Todos')) b.classList.add('active'); });
+      btns.forEach(b => { 
+        const text = b.textContent.toLowerCase();
+        if (text.includes(filter) || (filter === 'all' && text === 'todos')) b.classList.add('active'); 
+      });
     }
   }
   
@@ -831,7 +1302,7 @@
     
     cartItems.innerHTML = cart.map(item => `
       <div class="cart-item">
-        <div class="cart-item-img" style="background: ${item.color}; border-radius: 5px;"></div>
+        <img src="${item.image}" alt="${item.name}" class="cart-item-img">
         <div class="cart-item-info">
           <h4>${item.name}</h4>
           <p>$${item.price}</p>
@@ -856,7 +1327,7 @@
   
   function checkout() {
     if (cart.length === 0) return;
-    alert(`¡Gracias por tu compra!\n\nTotal: $${cart.reduce((s,i)=>s+i.price*i.qty,0).toFixed(2)}\n\nEn una tienda real, aquí te redirigiríamos a la pasarela de pago (Stripe, PayPal, MercadoPago).`);
+    alert(`¡Gracias por tu compra!\n\nTotal: $${cart.reduce((s,i)=>s+i.price*i.qty,0).toFixed(2)}\n\nEn una tienda real, aquí te redirigiríamos a la pasarela de pago.`);
     cart = [];
     saveCart();
     updateCartUI();
